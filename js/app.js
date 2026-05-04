@@ -1,7 +1,6 @@
 /* ════════════════════════════════════════════
    State
 ════════════════════════════════════════════ */
-console.log('[app] script loaded v1.0.4');
 let bpm=120, beats=4, noteValue=4, subdiv='1', sound='classic', vol=0.8;
 let playing=false, isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 // accentLevels: 0=strong,1=normal,2=ghost,3=mute
@@ -25,8 +24,6 @@ let _ctx=null;
 const AC=()=>{
   if(!_ctx){
     _ctx=new(window.AudioContext||window.webkitAudioContext)();
-    console.log('[Audio] Context created, state:', _ctx.state, 'sampleRate:', _ctx.sampleRate);
-    _ctx.addEventListener('statechange', ()=>console.log('[Audio] statechange →', _ctx.state));
   }
   return _ctx;
 };
@@ -177,7 +174,6 @@ function sched(){
     nextBeatTime+=bi; currentBeat=(currentBeat+1)%beats;
     scheduled++;
   }
-  if(scheduled>0) console.log('[sched] scheduled', scheduled, 'beat(s), currentTime:', c.currentTime.toFixed(3), 'nextBeatTime:', nextBeatTime.toFixed(3));
   timerID=setTimeout(sched,LA);
 }
 
@@ -217,24 +213,15 @@ function flashBeat(idx){
 ════════════════════════════════════════════ */
 function startM(){
   const c=AC();
-  console.log('[startM] called, state:', c.state, 'currentTime:', c.currentTime);
-  // Must call src.start() SYNCHRONOUSLY inside the user gesture for iOS audio unlock
   const buf=c.createBuffer(1,Math.ceil(c.sampleRate*.1),c.sampleRate);
   const src=c.createBufferSource();
   src.buffer=buf; src.connect(c.destination); src.start(0);
-  console.log('[startM] silent buffer started (sync, in user gesture)');
   const begin=()=>{
-    console.log('[startM] begin() fired, state:', c.state, 'currentTime:', c.currentTime);
     currentBeat=0; nextBeatTime=c.currentTime+.3; beatQueue=[];
-    console.log('[startM] nextBeatTime set to:', nextBeatTime);
     sched(); rafID=requestAnimationFrame(draw);
   };
   if(c.state==='suspended'){
-    console.log('[startM] context suspended, calling resume()...');
-    c.resume().then(()=>{
-      console.log('[startM] resume() resolved, state:', c.state, 'currentTime:', c.currentTime);
-      begin();
-    });
+    c.resume().then(begin);
   } else {
     begin();
   }
@@ -527,7 +514,4 @@ document.addEventListener('keydown',e=>{
 
 // Pre-create AudioContext on first touch (within user gesture) so it's
 // ready when the play button is pressed.
-document.addEventListener('touchstart', ()=>{
-  console.log('[iOS] first touchstart, creating AudioContext early');
-  AC();
-}, {once:true, passive:true});
+document.addEventListener('touchstart', ()=>{ AC(); }, {once:true, passive:true});
