@@ -21,7 +21,14 @@ const tempoOf=b=>{ for(const[m,n]of TEMPOS)if(b<=m)return n; return'Prestissimo'
    Audio
 ════════════════════════════════════════════ */
 let _ctx=null;
-const AC=()=>{ if(!_ctx)_ctx=new(window.AudioContext||window.webkitAudioContext)(); return _ctx; };
+const AC=()=>{
+  if(!_ctx){
+    _ctx=new(window.AudioContext||window.webkitAudioContext)();
+    console.log('[Audio] Context created, state:', _ctx.state, 'sampleRate:', _ctx.sampleRate);
+    _ctx.addEventListener('statechange', ()=>console.log('[Audio] statechange →', _ctx.state));
+  }
+  return _ctx;
+};
 // Volume multipliers per click type
 const VM={accent:1,beat:.72,sub:.38,ghost:.28};
 
@@ -159,6 +166,7 @@ const SUBDIV_DEFS={
 function sched(){
   const c=AC(), bi=60/bpm;
   const offsets=SUBDIV_DEFS[subdiv]||[0];
+  let scheduled=0;
   while(nextBeatTime<c.currentTime+SA){
     const tp=levelToType(currentBeat);
     if(tp) SND[sound](c,nextBeatTime,tp,vol);
@@ -166,7 +174,9 @@ function sched(){
     for(let s=1;s<offsets.length;s++)
       SND[sound](c,nextBeatTime+offsets[s]*bi,'sub',vol);
     nextBeatTime+=bi; currentBeat=(currentBeat+1)%beats;
+    scheduled++;
   }
+  if(scheduled>0) console.log('[sched] scheduled', scheduled, 'beat(s), currentTime:', c.currentTime.toFixed(3), 'nextBeatTime:', nextBeatTime.toFixed(3));
   timerID=setTimeout(sched,LA);
 }
 
@@ -206,17 +216,26 @@ function flashBeat(idx){
 ════════════════════════════════════════════ */
 function startM(){
   const c=AC();
+  console.log('[startM] called, state:', c.state, 'currentTime:', c.currentTime);
   const begin=()=>{
-    // Warm up iOS audio engine in the same callback as scheduling,
-    // ensuring warmup always completes before beats are queued.
+    console.log('[startM] begin() fired, state:', c.state, 'currentTime:', c.currentTime);
     const buf=c.createBuffer(1,Math.ceil(c.sampleRate*.1),c.sampleRate);
     const src=c.createBufferSource();
     src.buffer=buf; src.connect(c.destination); src.start(0);
+    console.log('[startM] silent buffer started');
     currentBeat=0; nextBeatTime=c.currentTime+.3; beatQueue=[];
+    console.log('[startM] nextBeatTime set to:', nextBeatTime);
     sched(); rafID=requestAnimationFrame(draw);
   };
-  if(c.state==='suspended') c.resume().then(begin);
-  else begin();
+  if(c.state==='suspended'){
+    console.log('[startM] context suspended, calling resume()...');
+    c.resume().then(()=>{
+      console.log('[startM] resume() resolved, state:', c.state, 'currentTime:', c.currentTime);
+      begin();
+    });
+  } else {
+    begin();
+  }
 }
 function stopM(){
   clearTimeout(timerID);timerID=null;
@@ -506,4 +525,7 @@ document.addEventListener('keydown',e=>{
 
 // Pre-create AudioContext on first touch (within user gesture) so it's
 // ready when the play button is pressed.
-document.addEventListener('touchstart', ()=>AC(), {once:true, passive:true});
+document.addEventListener('touchstart', ()=>{
+  console.log('[iOS] first touchstart, creating AudioContext early');
+  AC();
+}, {once:true, passive:true});
