@@ -770,9 +770,13 @@ function sched(){
    Play
 ════════════════════════════════════════════ */
 function startM(){
-  const c=AC(); if(c.state==='suspended')c.resume();
-  currentBeat=0; nextBeatTime=c.currentTime+.06;
-  sched();
+  const c=AC();
+  const begin=()=>{
+    currentBeat=0; nextBeatTime=c.currentTime+.06;
+    sched();
+  };
+  if(c.state==='suspended') c.resume().then(begin);
+  else begin();
 }
 function stopM(){
   clearTimeout(timerID);timerID=null;
@@ -1032,9 +1036,10 @@ document.getElementById('soundList').addEventListener('click',e=>{
   sound=item.dataset.s;
   // Update config button label
   document.getElementById('cfgSound').textContent=item.querySelector('.sound-name').textContent;
-  // Preview sound
-  const c=AC(); if(c.state==='suspended')c.resume();
-  SND[sound](c,c.currentTime+.05,'accent',vol*.7);
+  // Preview sound — await resume for iOS
+  const c=AC();
+  const preview=()=>SND[sound](c,c.currentTime+.05,'accent',vol*.7);
+  if(c.state==='suspended') c.resume().then(preview); else preview();
 });
 
 // ── Accent reset ──
@@ -1050,6 +1055,11 @@ document.addEventListener('keydown',e=>{
   if(e.code==='KeyT') tap();
   if(e.code==='Escape') closeAllSheets();
 });
+
+// iOS Safari: unlock AudioContext on first touch
+document.addEventListener('touchstart', ()=>{
+  const c=AC(); if(c.state==='suspended') c.resume();
+}, {once:true, passive:true});
 </script>
 </body>
 </html>
