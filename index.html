@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>节拍器 Metronome</title>
+  <style>
+/* ── Tokens ──────────────────────────────────── */
+:root {
+  --bg:         #f0f2f8;
+  --card:       #ffffff;
+  --card2:      #f6f7fb;
+  --border:     #e2e6f0;
+  --text:       #111827;
+  --text2:      #6b7280;
+  --text3:      #b0b8cc;
+  --accent:     #5b5ef4;
+  --accent-h:   #4346e0;
+  --accent-bg:  #edeffe;
+  --warn:       #f59e0b;
+  --warn-bg:    #fef3c7;
+  --ghost:      #94a3b8;
+  --danger:     #ef4444;
+  --danger-h:   #dc2626;
+  --green:      #22c55e;
+  --sh-lg: 0 20px 48px rgba(0,0,0,.08), 0 6px 18px rgba(0,0,0,.05);
+  --sh-sheet: 0 -8px 32px rgba(0,0,0,.12);
+}
+[data-theme="dark"] {
+  --bg:         #0b0f1a;
+  --card:       #141928;
+  --card2:      #1a2035;
+  --border:     #26304a;
+  --text:       #e8edf8;
+  --text2:      #7b8db0;
+  --text3:      #3d4f70;
+  --accent:     #7c7ff5;
+  --accent-h:   #5b5ef4;
+  --accent-bg:  #181b42;
+  --warn:       #fbbf24;
+  --warn-bg:    #29200a;
+  --ghost:      #4a5a78;
+  --danger:     #f87171;
+  --danger-h:   #ef4444;
+  --green:      #4ade80;
+  --sh-lg: 0 20px 48px rgba(0,0,0,.5), 0 6px 18px rgba(0,0,0,.3);
+  --sh-sheet: 0 -8px 32px rgba(0,0,0,.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 16px 40px;
+  transition: background .25s, color .25s;
+}
+
+/* ── Header ── */
+header {
+  width: 100%; max-width: 460px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.logo { display: flex; align-items: center; gap: 7px; font-size: 16px; font-weight: 700; color: var(--accent); }
+
+/* Theme switch */
+.theme-wrap { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; -webkit-user-select: none; }
+.theme-wrap .lbl { font-size: 11px; font-weight: 600; color: var(--text2); min-width: 26px; }
+.sw-track { width: 42px; height: 22px; border-radius: 11px; background: var(--border); position: relative; transition: background .3s; flex-shrink: 0; }
+.sw-track.on { background: var(--accent); }
+.sw-thumb { width: 16px; height: 16px; background: #fff; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform .3s; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.sw-track.on .sw-thumb { transform: translateX(20px); }
+
+/* ── Card ── */
+.card {
+  width: 100%; max-width: 460px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: var(--sh-lg);
+  transition: background .25s, border-color .25s;
+}
+
+/* ── Body ── */
+.body { padding: 16px 20px 22px; }
+
+/* BPM section */
+.bpm-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 4px; }
+.adj {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: var(--card2);
+  color: var(--text2); font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; user-select: none; touch-action: manipulation; flex-shrink: 0;
+}
+.adj:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.adj:active { transform: scale(.86); }
+.bpm-center { text-align: center; }
+.bpm-num {
+  display: inline-block; font-size: 64px; font-weight: 800;
+  letter-spacing: -4px; line-height: 1; color: var(--text);
+  min-width: 170px; border-radius: 8px; padding: 0 4px;
+  cursor: text; outline: none; caret-color: var(--accent);
+  transition: color .15s;
+}
+.bpm-num:hover { color: var(--accent); }
+.bpm-num:focus { color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.bpm-sub { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); margin-top: 1px; display: block; }
+
+/* Slider */
+.slider-wrap { margin-bottom: 16px; }
+.slider-marks { display: flex; justify-content: space-between; font-size: 10px; font-weight: 500; color: var(--text3); margin-bottom: 4px; }
+input[type="range"] { width: 100%; -webkit-appearance: none; appearance: none; height: 5px; border-radius: 3px; outline: none; cursor: pointer; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 3px solid var(--card); box-shadow: 0 2px 6px color-mix(in srgb,var(--accent) 40%,transparent); transition: transform .15s; }
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); border: 3px solid var(--card); }
+
+/* ── Three config buttons ── */
+.config-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+  margin-bottom: 12px;
+}
+.cfg-btn {
+  padding: 11px 8px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--card2);
+  cursor: pointer; text-align: left;
+  transition: all .15s; touch-action: manipulation;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.cfg-btn:hover { border-color: var(--accent); background: var(--accent-bg); }
+.cfg-btn:active { transform: scale(.97); }
+.cfg-ico { font-size: 18px; line-height: 1; margin-bottom: 2px; }
+.cfg-lbl { font-size: 10px; font-weight: 600; letter-spacing: .5px; color: var(--text2); }
+.cfg-val { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cfg-dots { display: flex; gap: 3px; align-items: center; margin-top: 1px; }
+.mini-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.mini-dot.l0 { background: var(--warn); }
+.mini-dot.l1 { background: var(--accent); }
+.mini-dot.l2 { background: var(--ghost); opacity: .6; }
+.mini-dot.l3 { background: var(--border); }
+
+/* ── Subdivision ── */
+.sub-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }.sub-btn {
+  padding: 9px 3px 7px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: var(--card2);
+  color: var(--text2); font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all .15s; text-align: center; line-height: 1.3;
+  touch-action: manipulation; display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.sub-ic { display: block; width: 52px; height: 26px; flex-shrink: 0; }
+.sub-btn:hover:not(.sel) { border-color: var(--accent); color: var(--text); }
+.sub-btn.sel { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+
+.div { height: 1px; background: var(--border); margin: 14px 0; }
+
+/* ── Volume ── */
+.vol-row { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; }
+.vol-ico { font-size: 14px; color: var(--text3); flex-shrink: 0; }
+
+/* ── Tap & Play ── */
+.tap-btn {
+  width: 100%; height: 42px; border-radius: 11px;
+  border: 1.5px dashed var(--border); background: transparent;
+  color: var(--text2); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s; margin-bottom: 10px; touch-action: manipulation;
+}
+.tap-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.tap-btn:active { transform: scale(.98); }
+.tap-btn.flash { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+
+.play-btn {
+  width: 100%; height: 72px; border-radius: 16px; border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent-h));
+  color: #fff; font-size: 19px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 8px 22px color-mix(in srgb,var(--accent) 36%,transparent);
+  transition: transform .18s, box-shadow .18s, background .18s; touch-action: manipulation;
+}
+.play-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px color-mix(in srgb,var(--accent) 46%,transparent); }
+.play-btn:active { transform: translateY(1px); }
+.play-btn.on { background: linear-gradient(135deg, var(--danger), var(--danger-h)); box-shadow: 0 8px 22px color-mix(in srgb,var(--danger) 36%,transparent); }
+.play-btn.on:hover { box-shadow: 0 12px 30px color-mix(in srgb,var(--danger) 46%,transparent); }
+.play-ico { font-size: 24px; }
+
+/* ── Sheet system ── */
+.backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.48);
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity .3s;
+}
+.backdrop.on { opacity: 1; pointer-events: all; }
+
+.sheet {
+  position: fixed; bottom: 0; left: 50%; z-index: 101;
+  width: 100%; max-width: 460px;
+  background: var(--card); border-top: 1.5px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  box-shadow: var(--sh-sheet);
+  transform: translateX(-50%) translateY(100%);
+  transition: transform .32s cubic-bezier(.32,0,.67,0);
+  max-height: 88svh; display: flex; flex-direction: column;
+}
+.sheet.on { transform: translateX(-50%) translateY(0); transition-timing-function: cubic-bezier(.33,1,.68,1); }
+
+.sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
+.sheet-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px 10px; flex-shrink: 0;
+}
+.sheet-title { font-size: 17px; font-weight: 700; }
+.sheet-close {
+  width: 28px; height: 28px; border-radius: 50%; border: none;
+  background: var(--card2); color: var(--text2); font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .15s; flex-shrink: 0;
+}
+.sheet-close:hover { background: var(--border); color: var(--text); }
+.sheet-body { padding: 0 20px 36px; overflow-y: auto; flex: 1; }
+
+/* ── Time signature sheet ── */
+.ts-display {
+  text-align: center; padding: 18px 0 20px;
+}
+.ts-big {
+  display: inline-block;
+  font-size: 52px; font-weight: 800; letter-spacing: -2px;
+  background: var(--card2); border: 1.5px solid var(--border);
+  border-radius: 14px; padding: 8px 28px; color: var(--text);
+  min-width: 140px;
+}
+.ts-controls {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;
+}
+.ts-ctrl-group { text-align: center; }
+.ts-ctrl-lbl { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; display: block; }
+.ts-adj-row { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.ts-val { font-size: 22px; font-weight: 700; min-width: 36px; text-align: center; }
+.ts-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: var(--card2);
+  color: var(--text2); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.ts-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.ts-btn:active { transform: scale(.88); }
+.ts-sep { height: 1px; background: var(--border); margin-bottom: 16px; }
+.ts-sec-lbl { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; display: block; }
+.ts-presets { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; }
+.ts-preset {
+  padding: 10px 4px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: var(--card2);
+  color: var(--text2); font-size: 14px; font-weight: 700;
+  cursor: pointer; text-align: center; transition: all .15s;
+}
+.ts-preset:hover:not(.sel) { border-color: var(--accent); color: var(--text); }
+.ts-preset.sel { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+
+/* ── Sound sheet ── */
+.sound-list { list-style: none; }
+.sound-item {
+  display: flex; align-items: center;
+  padding: 13px 4px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .12s; border-radius: 8px;
+  gap: 12px; margin: 0 -4px;
+}
+.sound-item:last-child { border-bottom: none; }
+.sound-item:hover { background: var(--card2); }
+.sound-item:active { background: var(--accent-bg); }
+.sound-ico { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
+.sound-info { flex: 1; }
+.sound-name { font-size: 15px; font-weight: 600; color: var(--text); display: block; }
+.sound-desc { font-size: 11px; color: var(--text2); margin-top: 1px; display: block; }
+.sound-check {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 13px; color: var(--accent);
+  background: var(--accent-bg); border: 1.5px solid var(--accent);
+  opacity: 0; transition: opacity .15s;
+}
+.sound-item.sel .sound-check { opacity: 1; }
+
+/* ── Accent sheet ── */
+.accent-legend {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+}
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+.accent-beats-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.accent-beat-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 12px;
+  background: var(--card2); border: 1.5px solid var(--border);
+}
+.accent-beat-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--card); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--text2); flex-shrink: 0;
+}
+.accent-levels { display: flex; gap: 5px; flex: 1; }
+.al-btn {
+  flex: 1; padding: 6px 4px; border-radius: 8px;
+  border: 1.5px solid var(--border); background: var(--card);
+  color: var(--text2); font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all .15s; text-align: center;
+}
+.al-btn:hover:not(.sel) { border-color: var(--accent); color: var(--text); }
+.al-btn.sel.lv-strong { border-color: var(--warn); background: var(--warn-bg); color: #92400e; }
+.al-btn.sel.lv-normal { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+.al-btn.sel.lv-ghost  { border-color: var(--ghost); background: color-mix(in srgb,var(--ghost) 12%,transparent); color: var(--ghost); }
+.al-btn.sel.lv-mute   { border-color: var(--border); background: var(--card2); color: var(--text3); }
+[data-theme="dark"] .al-btn.sel.lv-strong { color: var(--warn); }
+
+.accent-reset {
+  width: 100%; padding: 12px; border-radius: 10px;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--text2); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+}
+.accent-reset:hover { border-color: var(--danger); color: var(--danger); background: color-mix(in srgb,var(--danger) 8%,transparent); }
+
+/* ── Responsive ── */
+@media (max-width: 380px) {
+  .bpm-num { font-size: 52px; min-width: 145px; }
+  .play-btn { height: 64px; font-size: 17px; }
+  .ts-big { font-size: 42px; }
+  .al-btn { font-size: 10px; }
+}
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+    </svg>
+    节拍器
+  </div>
+  <div class="theme-wrap" id="themeWrap" role="switch" tabindex="0" aria-label="切换深浅色模式">
+    <span class="lbl">☀️</span>
+    <div class="sw-track" id="swTrack"><div class="sw-thumb"></div></div>
+    <span class="lbl">🌙</span>
+  </div>
+</header>
+
+<!-- Card -->
+<div class="card">
+
+  <!-- Body -->
+  <div class="body">
+
+    <!-- BPM -->
+    <div class="bpm-row">
+      <button class="adj" id="bpmDn">−</button>
+      <div class="bpm-center">
+        <span class="bpm-num" id="bpmNum" contenteditable="true" inputmode="numeric" spellcheck="false">120</span>
+        <span class="bpm-sub">BPM · <span id="tempoBadge">Allegro</span></span>
+      </div>
+      <button class="adj" id="bpmUp">+</button>
+    </div>
+    <div class="slider-wrap">
+      <div class="slider-marks"><span>20</span><span>60</span><span>120</span><span>180</span><span>240</span></div>
+      <input type="range" id="bpmSlider" min="20" max="240" value="120">
+    </div>
+
+    <!-- Config row -->
+    <div class="config-row">
+      <button class="cfg-btn" id="btnTs">
+        <span class="cfg-ico">⬛</span>
+        <span class="cfg-lbl">拍号</span>
+        <span class="cfg-val" id="cfgTs">4/4</span>
+      </button>
+      <button class="cfg-btn" id="btnSound">
+        <span class="cfg-ico">🎵</span>
+        <span class="cfg-lbl">音色</span>
+        <span class="cfg-val" id="cfgSound">经典</span>
+      </button>
+      <button class="cfg-btn" id="btnAccent">
+        <span class="cfg-ico">🔊</span>
+        <span class="cfg-lbl">节拍强弱</span>
+        <div class="cfg-dots" id="cfgDots"></div>
+      </button>
+    </div>
+
+    <!-- Subdivision -->
+    <div class="sub-row" id="subRow">
+
+      <!-- ×1 四分音符：符头 + 符干 -->
+      <button class="sub-btn sel" data-d="1">
+        <svg class="sub-ic" viewBox="0 0 72 36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="36" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 36 28)"/>
+          <rect x="40.8" y="8" width="1.8" height="18"/>
+        </svg>
+        <span>四分</span>
+      </button>
+
+      <!-- ×2 八分音符：两个符头 + 单横梁 -->
+      <button class="sub-btn" data-d="2">
+        <svg class="sub-ic" viewBox="0 0 72 36" fill="currentColor">
+          <ellipse cx="18" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 18 28)"/>
+          <rect x="22.8" y="8" width="1.8" height="18"/>
+          <ellipse cx="54" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 54 28)"/>
+          <rect x="58.8" y="8" width="1.8" height="18"/>
+          <rect x="22.8" y="8" width="37.8" height="2.8"/>
+        </svg>
+        <span>八分</span>
+      </button>
+
+      <!-- ×3 三连音 -->
+      <button class="sub-btn" data-d="3">
+        <svg class="sub-ic" viewBox="0 0 72 36" fill="currentColor">
+          <ellipse cx="12" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 12 28)"/>
+          <rect x="16.8" y="8" width="1.8" height="18"/>
+          <ellipse cx="36" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 36 28)"/>
+          <rect x="40.8" y="8" width="1.8" height="18"/>
+          <ellipse cx="60" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 60 28)"/>
+          <rect x="64.8" y="8" width="1.8" height="18"/>
+          <rect x="16.8" y="8" width="49.8" height="2.8"/>
+        </svg>
+        <span>三连</span>
+      </button>
+
+      <!-- ×4 十六分音符 -->
+      <button class="sub-btn" data-d="4">
+        <svg class="sub-ic" viewBox="0 0 72 36" fill="currentColor">
+          <ellipse cx="9"  cy="28" rx="5.5" ry="3.8" transform="rotate(-20 9 28)"/>
+          <rect x="13.8" y="8" width="1.8" height="18"/>
+          <ellipse cx="26" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 26 28)"/>
+          <rect x="30.8" y="8" width="1.8" height="18"/>
+          <ellipse cx="43" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 43 28)"/>
+          <rect x="47.8" y="8" width="1.8" height="18"/>
+          <ellipse cx="60" cy="28" rx="5.5" ry="3.8" transform="rotate(-20 60 28)"/>
+          <rect x="64.8" y="8" width="1.8" height="18"/>
+          <rect x="13.8" y="8"    width="52.8" height="2.8"/>
+          <rect x="13.8" y="12.5" width="52.8" height="2.8"/>
+        </svg>
+        <span>十六</span>
+      </button>
+
+    </div>
+
+    <div class="div"></div>
+
+    <!-- Volume -->
+    <div class="vol-row">
+      <span class="vol-ico">🔈</span>
+      <input type="range" id="volSlider" min="0" max="100" value="80">
+      <span class="vol-ico">🔊</span>
+    </div>
+
+    <!-- Tap & Play -->
+    <div class="div" style="margin: 12px 0 10px"></div>
+    <button class="tap-btn" id="tapBtn">点击节拍 / Tap Tempo</button>
+    <button class="play-btn" id="playBtn">
+      <span class="play-ico" id="playIcon">▶</span>
+      <span id="playTxt">开始 / Start</span>
+    </button>
+
+  </div>
+</div><!-- /card -->
+
+<!-- Backdrop -->
+<div class="backdrop" id="backdrop"></div>
+
+<!-- ═══ Sheet: 拍号 ═══ -->
+<div class="sheet" id="sheetTs">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <span class="sheet-title">拍号</span>
+    <button class="sheet-close" data-close="sheetTs">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="ts-display">
+      <span class="ts-big" id="tsBig">4/4</span>
+    </div>
+    <div class="ts-controls">
+      <div class="ts-ctrl-group">
+        <span class="ts-ctrl-lbl">每小节拍数</span>
+        <div class="ts-adj-row">
+          <button class="ts-btn" id="beatsDn">−</button>
+          <span class="ts-val" id="beatsVal">4</span>
+          <button class="ts-btn" id="beatsUp">+</button>
+        </div>
+      </div>
+      <div class="ts-ctrl-group">
+        <span class="ts-ctrl-lbl">音符时值</span>
+        <div class="ts-adj-row">
+          <button class="ts-btn" id="noteDn">−</button>
+          <span class="ts-val" id="noteVal">1/4</span>
+          <button class="ts-btn" id="noteUp">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="ts-sep"></div>
+    <span class="ts-sec-lbl">快速选择</span>
+    <div class="ts-presets" id="tsPresets">
+      <button class="ts-preset" data-beats="2" data-note="4">2/4</button>
+      <button class="ts-preset" data-beats="3" data-note="4">3/4</button>
+      <button class="ts-preset sel" data-beats="4" data-note="4">4/4</button>
+      <button class="ts-preset" data-beats="6" data-note="8">6/8</button>
+      <button class="ts-preset" data-beats="5" data-note="4">5/4</button>
+      <button class="ts-preset" data-beats="7" data-note="8">7/8</button>
+      <button class="ts-preset" data-beats="9" data-note="8">9/8</button>
+      <button class="ts-preset" data-beats="12" data-note="8">12/8</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Sheet: 音色 ═══ -->
+<div class="sheet" id="sheetSound">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <span class="sheet-title">音色</span>
+    <button class="sheet-close" data-close="sheetSound">✕</button>
+  </div>
+  <div class="sheet-body">
+    <ul class="sound-list" id="soundList">
+      <li class="sound-item sel" data-s="classic">
+        <span class="sound-ico">🪘</span>
+        <span class="sound-info"><span class="sound-name">经典</span><span class="sound-desc">传统节拍器双音叠加</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="wood">
+        <span class="sound-ico">🪵</span>
+        <span class="sound-info"><span class="sound-name">木块</span><span class="sound-desc">噪声混合低频共鸣</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="bell">
+        <span class="sound-ico">🔔</span>
+        <span class="sound-info"><span class="sound-name">铃声</span><span class="sound-desc">泛音衰减，余音绵长</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="beep">
+        <span class="sound-ico">🎛</span>
+        <span class="sound-info"><span class="sound-name">电子</span><span class="sound-desc">纯正弦波，干净利落</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="clap">
+        <span class="sound-ico">👏</span>
+        <span class="sound-info"><span class="sound-name">拍手</span><span class="sound-desc">三层噪声模拟真实掌声</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="kick">
+        <span class="sound-ico">🥁</span>
+        <span class="sound-info"><span class="sound-name">踢鼓</span><span class="sound-desc">正弦扫频，低频冲击</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="whistle">
+        <span class="sound-ico">🎵</span>
+        <span class="sound-info"><span class="sound-name">口哨</span><span class="sound-desc">音高滑动，圆润悦耳</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="tri">
+        <span class="sound-ico">🔺</span>
+        <span class="sound-info"><span class="sound-name">三角铁</span><span class="sound-desc">高频金属，余音持久</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="piano">
+        <span class="sound-ico">🎹</span>
+        <span class="sound-info"><span class="sound-name">钢琴</span><span class="sound-desc">谐波叠加，琴锤瞬态</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ Sheet: 节拍强弱 ═══ -->
+<div class="sheet" id="sheetAccent">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <span class="sheet-title">节拍强弱</span>
+    <button class="sheet-close" data-close="sheetAccent">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="accent-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div>重音</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>普通</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--ghost)"></div>弱拍</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>静音</div>
+    </div>
+    <div class="accent-beats-list" id="accentList"></div>
+    <button class="accent-reset" id="accentReset">恢复默认</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   State
+════════════════════════════════════════════ */
+let bpm=120, beats=4, noteValue=4, subdiv='1', sound='classic', vol=0.8;
+let playing=false, isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+// accentLevels: 0=strong,1=normal,2=ghost,3=mute
+let accentLevels=[0,1,1,1];
+
+let currentBeat=0, nextBeatTime=0, timerID=null;
+let tapTimes=[], tapTimer=null, pressTimer=null;
+const LA=25, SA=0.12;
+
+/* ════════════════════════════════════════════
+   Tempo
+════════════════════════════════════════════ */
+const TEMPOS=[[20,'Larghissimo'],[40,'Grave'],[60,'Largo'],[66,'Larghetto'],[76,'Adagio'],
+              [108,'Andante'],[120,'Moderato'],[156,'Allegro'],[176,'Vivace'],[200,'Presto'],[240,'Prestissimo']];
+const tempoOf=b=>{ for(const[m,n]of TEMPOS)if(b<=m)return n; return'Prestissimo'; };
+
+/* ════════════════════════════════════════════
+   Audio
+════════════════════════════════════════════ */
+let _ctx=null;
+const AC=()=>{ if(!_ctx)_ctx=new(window.AudioContext||window.webkitAudioContext)(); return _ctx; };
+// Volume multipliers per click type
+const VM={accent:1,beat:.72,sub:.38,ghost:.28};
+
+// Resolve accent level → click type
+function levelToType(beatIdx){
+  const l=accentLevels[beatIdx]??1;
+  if(l===3)return null;
+  if(l===0)return'accent';
+  if(l===1)return'beat';
+  return'ghost';  // l===2
+}
+
+const SND={
+  classic:(c,t,tp,v)=>{
+    const m=v*VM[tp],fh=tp==='accent'?1800:tp==='beat'?1200:900,fl=tp==='accent'?520:tp==='beat'?370:220;
+    const o1=c.createOscillator(),g1=c.createGain();
+    o1.type='square';o1.frequency.value=fh;
+    g1.gain.setValueAtTime(m*.22,t);g1.gain.exponentialRampToValueAtTime(.0001,t+.022);
+    o1.connect(g1);g1.connect(c.destination);o1.start(t);o1.stop(t+.025);
+    const o2=c.createOscillator(),g2=c.createGain();
+    o2.type='sine';o2.frequency.value=fl;
+    g2.gain.setValueAtTime(m*.88,t);g2.gain.exponentialRampToValueAtTime(.0001,t+.055);
+    o2.connect(g2);g2.connect(c.destination);o2.start(t);o2.stop(t+.06);
+  },
+  wood:(c,t,tp,v)=>{
+    const m=v*VM[tp],f=tp==='accent'?320:tp==='beat'?230:165,dur=.07;
+    const r=c.sampleRate,buf=c.createBuffer(1,Math.ceil(r*dur),r),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*.18));
+    const ns=c.createBufferSource();ns.buffer=buf;
+    const flt=c.createBiquadFilter();flt.type='bandpass';flt.frequency.value=f*2.2;flt.Q.value=3;
+    const ng=c.createGain();ng.gain.setValueAtTime(m*.5,t);ng.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    ns.connect(flt);flt.connect(ng);ng.connect(c.destination);ns.start(t);ns.stop(t+dur+.01);
+    const ot=c.createOscillator(),og=c.createGain();
+    ot.type='sine';ot.frequency.value=f;
+    og.gain.setValueAtTime(m*.85,t);og.gain.exponentialRampToValueAtTime(.0001,t+dur+.02);
+    ot.connect(og);og.connect(c.destination);ot.start(t);ot.stop(t+dur+.03);
+  },
+  bell:(c,t,tp,v)=>{
+    const m=v*VM[tp],f=tp==='accent'?1480:tp==='beat'?1108:880,dc=tp==='accent'?1.1:tp==='beat'?.75:.45;
+    const o1=c.createOscillator(),g1=c.createGain();
+    o1.type='sine';o1.frequency.value=f;
+    g1.gain.setValueAtTime(m*.6,t);g1.gain.exponentialRampToValueAtTime(.0001,t+dc);
+    o1.connect(g1);g1.connect(c.destination);o1.start(t);o1.stop(t+dc+.05);
+    const o2=c.createOscillator(),g2=c.createGain();
+    o2.type='sine';o2.frequency.value=f*2.756;
+    g2.gain.setValueAtTime(m*.18,t);g2.gain.exponentialRampToValueAtTime(.0001,t+dc*.45);
+    o2.connect(g2);g2.connect(c.destination);o2.start(t);o2.stop(t+dc*.5);
+    const o3=c.createOscillator(),g3=c.createGain();
+    o3.type='square';o3.frequency.value=f*4;
+    g3.gain.setValueAtTime(m*.08,t);g3.gain.exponentialRampToValueAtTime(.0001,t+.012);
+    o3.connect(g3);g3.connect(c.destination);o3.start(t);o3.stop(t+.015);
+  },
+  beep:(c,t,tp,v)=>{
+    const m=v*VM[tp],f=tp==='accent'?880:tp==='beat'?660:440,dur=tp==='sub'?.04:.065;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(m*.85,t+.004);
+    g.gain.setValueAtTime(m*.85,t+dur-.006);g.gain.linearRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.01);
+  },
+  clap:(c,t,tp,v)=>{
+    const m=v*VM[tp];
+    [0,.012,.022].forEach((off,i)=>{
+      const dur=.06,buf=c.createBuffer(1,Math.ceil(c.sampleRate*dur),c.sampleRate),d=buf.getChannelData(0);
+      const a=1/(i===0?8:20);
+      for(let j=0;j<d.length;j++)d[j]=(Math.random()*2-1)*Math.exp(-j*a);
+      const ns=c.createBufferSource();ns.buffer=buf;
+      const fl=c.createBiquadFilter();fl.type='bandpass';fl.frequency.value=1000+i*350;fl.Q.value=1.8;
+      const g=c.createGain();g.gain.setValueAtTime(m*(i===0?.9:.45),t+off);
+      ns.connect(fl);fl.connect(g);g.connect(c.destination);ns.start(t+off);ns.stop(t+off+dur+.01);
+    });
+  },
+  kick:(c,t,tp,v)=>{
+    const m=v*VM[tp],f0=tp==='accent'?190:tp==='beat'?155:120;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(38,t+.09);
+    g.gain.setValueAtTime(m,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.16);
+    const o2=c.createOscillator(),g2=c.createGain();
+    o2.type='square';o2.frequency.value=520;
+    g2.gain.setValueAtTime(m*.3,t);g2.gain.exponentialRampToValueAtTime(.001,t+.016);
+    o2.connect(g2);g2.connect(c.destination);o2.start(t);o2.stop(t+.02);
+  },
+  whistle:(c,t,tp,v)=>{
+    const m=v*VM[tp],f=tp==='accent'?1760:tp==='beat'?1320:1056,dur=.16;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(f*.88,t);o.frequency.linearRampToValueAtTime(f*1.02,t+dur*.4);
+    o.frequency.linearRampToValueAtTime(f*.97,t+dur);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(m*.65,t+.02);
+    g.gain.setValueAtTime(m*.65,t+dur-.03);g.gain.linearRampToValueAtTime(0,t+dur);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.01);
+  },
+  tri:(c,t,tp,v)=>{
+    const m=v*VM[tp],f=tp==='accent'?3200:tp==='beat'?2400:1800,dc=tp==='accent'?1.6:tp==='beat'?1.1:.6;
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(m*.5,t);g.gain.exponentialRampToValueAtTime(.0001,t+dc);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dc+.05);
+    const o2=c.createOscillator(),g2=c.createGain();
+    o2.type='sine';o2.frequency.value=f*1.48;
+    g2.gain.setValueAtTime(m*.28,t);g2.gain.exponentialRampToValueAtTime(.0001,t+dc*.5);
+    o2.connect(g2);g2.connect(c.destination);o2.start(t);o2.stop(t+dc*.55);
+    const o3=c.createOscillator(),g3=c.createGain();
+    o3.type='square';o3.frequency.value=f*2.5;
+    g3.gain.setValueAtTime(m*.1,t);g3.gain.exponentialRampToValueAtTime(.0001,t+.01);
+    o3.connect(g3);g3.connect(c.destination);o3.start(t);o3.stop(t+.015);
+  },
+  piano:(c,t,tp,v)=>{
+    const m=v*VM[tp],f=tp==='accent'?440:tp==='beat'?330:262;
+    [[1,.8,.65],[2,.15,.3],[3,.1,.15],[4,.05,.1],[6,.03,.08]].forEach(([k,amp,dc])=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type='sine';o.frequency.value=f*k;
+      g.gain.setValueAtTime(m*amp,t);g.gain.exponentialRampToValueAtTime(.0001,t+dc);
+      o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dc+.02);
+    });
+    const on=c.createOscillator(),gn=c.createGain();
+    on.type='square';on.frequency.value=f*8;
+    gn.gain.setValueAtTime(m*.12,t);gn.gain.exponentialRampToValueAtTime(.0001,t+.008);
+    on.connect(gn);gn.connect(c.destination);on.start(t);on.stop(t+.01);
+  },
+};
+
+/* ════════════════════════════════════════════
+   Scheduler
+════════════════════════════════════════════ */
+// Subdivision offset maps: fraction of one beat interval
+const SUBDIV_DEFS={
+  '1': [0],
+  '2': [0, .5],
+  '3': [0, 1/3, 2/3],
+  '4': [0, .25, .5, .75],
+};
+
+function sched(){
+  const c=AC(), bi=60/bpm;
+  const offsets=SUBDIV_DEFS[subdiv]||[0];
+  while(nextBeatTime<c.currentTime+SA){
+    const tp=levelToType(currentBeat);
+    if(tp) SND[sound](c,nextBeatTime,tp,vol);
+    for(let s=1;s<offsets.length;s++)
+      SND[sound](c,nextBeatTime+offsets[s]*bi,'sub',vol);
+    nextBeatTime+=bi; currentBeat=(currentBeat+1)%beats;
+  }
+  timerID=setTimeout(sched,LA);
+}
+
+/* ════════════════════════════════════════════
+   Play
+════════════════════════════════════════════ */
+function startM(){
+  const c=AC(); if(c.state==='suspended')c.resume();
+  currentBeat=0; nextBeatTime=c.currentTime+.06;
+  sched();
+}
+function stopM(){
+  clearTimeout(timerID);timerID=null;
+}
+function togglePlay(){
+  playing=!playing;
+  const btn=document.getElementById('playBtn');
+  if(playing){ startM(); btn.classList.add('on'); document.getElementById('playIcon').textContent='⏸'; document.getElementById('playTxt').textContent='停止 / Stop'; }
+  else { stopM(); btn.classList.remove('on'); document.getElementById('playIcon').textContent='▶'; document.getElementById('playTxt').textContent='开始 / Start'; }
+}
+
+/* ════════════════════════════════════════════
+   BPM
+════════════════════════════════════════════ */
+function setBPM(v){
+  bpm=Math.max(20,Math.min(240,Math.round(v)));
+  const nm=tempoOf(bpm);
+  document.getElementById('bpmNum').textContent=bpm;
+  document.getElementById('bpmSlider').value=bpm;
+  document.getElementById('tempoBadge').textContent=nm;
+  fillSlider(document.getElementById('bpmSlider'));
+}
+
+/* BPM contenteditable */
+const numEl=document.getElementById('bpmNum');
+numEl.addEventListener('focus',()=>{ requestAnimationFrame(()=>{ const r=document.createRange();r.selectNodeContents(numEl);const s=window.getSelection();s.removeAllRanges();s.addRange(r); }); });
+numEl.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();numEl.blur();return;}
+  if(e.key==='Escape'){numEl.textContent=bpm;numEl.blur();return;}
+  if(!['0','1','2','3','4','5','6','7','8','9','Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter','Escape'].includes(e.key))e.preventDefault();
+});
+numEl.addEventListener('blur',()=>{ const v=parseInt(numEl.textContent.replace(/\D/g,''),10); setBPM(isNaN(v)?bpm:v); });
+numEl.addEventListener('paste',e=>{ e.preventDefault(); const n=parseInt((e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,''),10); if(!isNaN(n))numEl.textContent=String(Math.max(20,Math.min(240,n))); });
+
+/* ════════════════════════════════════════════
+   Slider fill
+════════════════════════════════════════════ */
+function fillSlider(el){
+  const pct=((el.value-el.min)/(el.max-el.min))*100;
+  const cs=getComputedStyle(document.documentElement);
+  el.style.background=`linear-gradient(to right,${cs.getPropertyValue('--accent').trim()} ${pct}%,${cs.getPropertyValue('--border').trim()} ${pct}%)`;
+}
+
+/* ════════════════════════════════════════════
+   Time signature
+════════════════════════════════════════════ */
+const NOTE_VALUES=[2,4,8,16];
+let noteIdx=1; // index into NOTE_VALUES, default=4
+
+function tsSig(){ return `${beats}/${NOTE_VALUES[noteIdx]}`; }
+
+function updateTs(){
+  document.getElementById('tsBig').textContent=tsSig();
+  document.getElementById('beatsVal').textContent=beats;
+  document.getElementById('noteVal').textContent=`1/${NOTE_VALUES[noteIdx]}`;
+  document.getElementById('cfgTs').textContent=tsSig();
+  // Update preset selection
+  document.querySelectorAll('.ts-preset').forEach(b=>{
+    b.classList.toggle('sel',+b.dataset.beats===beats && +b.dataset.note===NOTE_VALUES[noteIdx]);
+  });
+  updateAccentSheet();
+}
+
+function changeBeats(delta){
+  beats=Math.max(1,Math.min(16,beats+delta));
+  // resize accentLevels
+  while(accentLevels.length<beats) accentLevels.push(1);
+  accentLevels=accentLevels.slice(0,beats);
+  currentBeat=0;
+  updateTs();
+  updateCfgDots();
+}
+function changeNote(delta){
+  noteIdx=Math.max(0,Math.min(NOTE_VALUES.length-1,noteIdx+delta));
+  updateTs();
+}
+
+/* ════════════════════════════════════════════
+   Accent
+════════════════════════════════════════════ */
+const LV_LABELS=['重音','普通','弱拍','静音'];
+const LV_CLS_BTN=['lv-strong','lv-normal','lv-ghost','lv-mute'];
+
+function updateAccentSheet(){
+  const list=document.getElementById('accentList');
+  if(!list)return;
+  list.innerHTML='';
+  for(let i=0;i<beats;i++){
+    const row=document.createElement('div');
+    row.className='accent-beat-row';
+    const num=document.createElement('div');
+    num.className='accent-beat-num'; num.textContent=i+1;
+    row.appendChild(num);
+    const levels=document.createElement('div');
+    levels.className='accent-levels';
+    for(let l=0;l<4;l++){
+      const btn=document.createElement('button');
+      btn.className=`al-btn ${LV_CLS_BTN[l]}`+(accentLevels[i]===l?' sel':'');
+      btn.textContent=LV_LABELS[l];
+      btn.addEventListener('click',()=>{
+        accentLevels[i]=l;
+        // update this row's buttons
+        levels.querySelectorAll('.al-btn').forEach((b,li)=>b.classList.toggle('sel',li===l));
+        updateCfgDots();
+      });
+      levels.appendChild(btn);
+    }
+    row.appendChild(levels);
+    list.appendChild(row);
+  }
+}
+
+function updateCfgDots(){
+  const container=document.getElementById('cfgDots');
+  container.innerHTML='';
+  accentLevels.forEach(l=>{
+    const d=document.createElement('div');
+    d.className=`mini-dot l${l}`;
+    container.appendChild(d);
+  });
+}
+
+function resetAccent(){
+  accentLevels=Array.from({length:beats},(_,i)=>i===0?0:1);
+  updateAccentSheet();
+  updateCfgDots();
+}
+
+/* ════════════════════════════════════════════
+   Sheet system
+════════════════════════════════════════════ */
+function openSheet(id){
+  document.getElementById('backdrop').classList.add('on');
+  document.getElementById(id).classList.add('on');
+  document.body.style.overflow='hidden';
+  if(id==='sheetAccent') updateAccentSheet();
+}
+function closeSheet(id){
+  document.getElementById('backdrop').classList.remove('on');
+  document.getElementById(id).classList.remove('on');
+  document.body.style.overflow='';
+}
+function closeAllSheets(){
+  document.querySelectorAll('.sheet.on').forEach(s=>s.classList.remove('on'));
+  document.getElementById('backdrop').classList.remove('on');
+  document.body.style.overflow='';
+}
+
+/* ════════════════════════════════════════════
+   Tap
+════════════════════════════════════════════ */
+function tap(){
+  const now=performance.now(); tapTimes.push(now);
+  if(tapTimes.length>6)tapTimes.shift();
+  const btn=document.getElementById('tapBtn');
+  btn.classList.add('flash'); setTimeout(()=>btn.classList.remove('flash'),140);
+  if(tapTimes.length>=2){
+    let s=0; for(let i=1;i<tapTimes.length;i++)s+=tapTimes[i]-tapTimes[i-1];
+    setBPM(60000/(s/(tapTimes.length-1)));
+  }
+  clearTimeout(tapTimer); tapTimer=setTimeout(()=>{ tapTimes=[]; },2200);
+}
+
+/* ════════════════════════════════════════════
+   Theme
+════════════════════════════════════════════ */
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  document.getElementById('swTrack').classList.toggle('on',isDark);
+  setTimeout(()=>{ fillSlider(document.getElementById('bpmSlider')); fillSlider(document.getElementById('volSlider')); },40);
+}
+
+/* ════════════════════════════════════════════
+   Long press
+════════════════════════════════════════════ */
+const startPress=dir=>{ setBPM(bpm+dir); pressTimer=setInterval(()=>setBPM(bpm+dir),88); };
+const endPress=()=>clearInterval(pressTimer);
+
+/* ════════════════════════════════════════════
+   Init
+════════════════════════════════════════════ */
+applyTheme();
+setBPM(120);
+fillSlider(document.getElementById('volSlider'));
+updateCfgDots();
+
+/* ════════════════════════════════════════════
+   Events
+════════════════════════════════════════════ */
+document.getElementById('playBtn').addEventListener('click',togglePlay);
+
+// Theme
+const tw=document.getElementById('themeWrap');
+tw.addEventListener('click',()=>{ isDark=!isDark; applyTheme(); });
+tw.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); isDark=!isDark; applyTheme(); } });
+
+// Tap
+document.getElementById('tapBtn').addEventListener('click',tap);
+
+// BPM slider
+document.getElementById('bpmSlider').addEventListener('input',e=>{ setBPM(+e.target.value); fillSlider(e.target); });
+
+// Volume
+document.getElementById('volSlider').addEventListener('input',e=>{ vol=e.target.value/100; fillSlider(e.target); });
+
+// BPM +/-
+['bpmDn','bpmUp'].forEach(id=>{
+  const el=document.getElementById(id),dir=id==='bpmUp'?1:-1;
+  el.addEventListener('click',()=>setBPM(bpm+dir));
+  el.addEventListener('mousedown',()=>startPress(dir));
+  el.addEventListener('touchstart',e=>{ e.preventDefault(); startPress(dir); },{passive:false});
+  el.addEventListener('mouseup',endPress); el.addEventListener('mouseleave',endPress); el.addEventListener('touchend',endPress);
+});
+
+// Subdivision
+document.getElementById('subRow').addEventListener('click',e=>{
+  const b=e.target.closest('.sub-btn'); if(!b)return;
+  document.querySelectorAll('#subRow .sub-btn').forEach(x=>x.classList.remove('sel'));
+  b.classList.add('sel'); subdiv=b.dataset.d;
+});
+
+// Config buttons → open sheets
+document.getElementById('btnTs').addEventListener('click',()=>openSheet('sheetTs'));
+document.getElementById('btnSound').addEventListener('click',()=>openSheet('sheetSound'));
+document.getElementById('btnAccent').addEventListener('click',()=>openSheet('sheetAccent'));
+
+// Backdrop → close
+document.getElementById('backdrop').addEventListener('click',closeAllSheets);
+
+// Sheet close buttons
+document.querySelectorAll('.sheet-close').forEach(btn=>{
+  btn.addEventListener('click',()=>closeSheet(btn.dataset.close));
+});
+
+// ── 拍号 sheet events ──
+document.getElementById('beatsDn').addEventListener('click',()=>changeBeats(-1));
+document.getElementById('beatsUp').addEventListener('click',()=>changeBeats(1));
+document.getElementById('noteDn').addEventListener('click',()=>changeNote(-1));
+document.getElementById('noteUp').addEventListener('click',()=>changeNote(1));
+document.getElementById('tsPresets').addEventListener('click',e=>{
+  const b=e.target.closest('.ts-preset'); if(!b)return;
+  beats=+b.dataset.beats;
+  // match noteIdx
+  noteIdx=NOTE_VALUES.indexOf(+b.dataset.note); if(noteIdx<0)noteIdx=1;
+  while(accentLevels.length<beats) accentLevels.push(1);
+  accentLevels=accentLevels.slice(0,beats);
+  currentBeat=0;
+  updateTs();
+  updateCfgDots();
+});
+
+// ── 音色 sheet events ──
+document.getElementById('soundList').addEventListener('click',e=>{
+  const item=e.target.closest('.sound-item'); if(!item)return;
+  document.querySelectorAll('.sound-item').forEach(x=>x.classList.remove('sel'));
+  item.classList.add('sel');
+  sound=item.dataset.s;
+  // Update config button label
+  document.getElementById('cfgSound').textContent=item.querySelector('.sound-name').textContent;
+  // Preview sound
+  const c=AC(); if(c.state==='suspended')c.resume();
+  SND[sound](c,c.currentTime+.05,'accent',vol*.7);
+});
+
+// ── Accent reset ──
+document.getElementById('accentReset').addEventListener('click',resetAccent);
+
+// ── Keyboard ──
+document.addEventListener('keydown',e=>{
+  if(document.activeElement===numEl)return;
+  if(e.target.tagName==='INPUT')return;
+  if(e.code==='Space'){ e.preventDefault(); togglePlay(); }
+  if(e.code==='ArrowUp'){ e.preventDefault(); setBPM(bpm+1); }
+  if(e.code==='ArrowDown'){ e.preventDefault(); setBPM(bpm-1); }
+  if(e.code==='KeyT') tap();
+  if(e.code==='Escape') closeAllSheets();
+});
+</script>
+</body>
+</html>
