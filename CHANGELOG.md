@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.2 — 2026-05-04
+
+### Bug Fixes
+- **iOS 无声音**：将预热 silent buffer 移入 `begin()` 回调内，与调度逻辑严格串行（resume → 预热 → 调度），消除原来两段代码分离导致的顺序不可控问题
+- 移除 document 级 `touchstart`/`touchend`/`click` unlock 监听器，改为在 `startM` 内统一处理；保留首次 `touchstart` 用于预创建 AudioContext
+
+---
+
 ## v1.0.1 — 2026-05-04
 
 ### Bug Fixes

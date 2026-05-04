@@ -207,6 +207,11 @@ function flashBeat(idx){
 function startM(){
   const c=AC();
   const begin=()=>{
+    // Warm up iOS audio engine in the same callback as scheduling,
+    // ensuring warmup always completes before beats are queued.
+    const buf=c.createBuffer(1,Math.ceil(c.sampleRate*.1),c.sampleRate);
+    const src=c.createBufferSource();
+    src.buffer=buf; src.connect(c.destination); src.start(0);
     currentBeat=0; nextBeatTime=c.currentTime+.3; beatQueue=[];
     sched(); rafID=requestAnimationFrame(draw);
   };
@@ -499,20 +504,6 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Escape') closeAllSheets();
 });
 
-// iOS Safari: resume() alone is not enough — must exercise the audio graph
-// with a real buffer. Check state each time so re-suspension (background/lock)
-// is handled on the next gesture rather than being skipped by a stale flag.
-function iosUnlock() {
-  const c = AC();
-  if (c.state !== 'suspended') return;
-  c.resume().then(() => {
-    const buf = c.createBuffer(1, Math.ceil(c.sampleRate * 0.1), c.sampleRate);
-    const src = c.createBufferSource();
-    src.buffer = buf;
-    src.connect(c.destination);
-    src.start(0);
-  });
-}
-document.addEventListener('touchstart', iosUnlock, {passive: true});
-document.addEventListener('touchend',   iosUnlock, {passive: true});
-document.addEventListener('click',      iosUnlock);
+// Pre-create AudioContext on first touch (within user gesture) so it's
+// ready when the play button is pressed.
+document.addEventListener('touchstart', ()=>AC(), {once:true, passive:true});
