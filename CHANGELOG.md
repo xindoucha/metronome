@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.3 — 2026-05-04
+
+### Debug
+- 添加 Web Audio 全链路诊断日志（脚本加载、Context 创建/状态变更、resume、begin、sched 调度），用于定位 iOS 无声问题，排查后将移除
+
+---
+
 ## v1.0.2 — 2026-05-04
 
 ### Bug Fixes
