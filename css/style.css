@@ -204,6 +204,15 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 .play-btn.on:hover { box-shadow: 0 12px 30px color-mix(in srgb,var(--danger) 46%,transparent); }
 .play-ico { font-size: 24px; }
 
+/* ── Card footer ── */
+.card-footer {
+  text-align: center;
+  padding: 8px 20px 12px;
+  font-size: 11px; font-weight: 500; letter-spacing: .5px;
+  color: var(--text3);
+  border-top: 1px solid var(--border);
+}
+
 /* ── Sheet system ── */
 .backdrop {
   position: fixed; inset: 0; background: rgba(0,0,0,.48);
