@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.4 — 2026-05-04
+
+### Bug Fixes
+- **iOS 无声音（根本修复）**：将 `c.createBuffer` / `src.start(0)` 提前到 `startM()` 同步代码中执行，确保在用户手势调用栈内触发真实音频播放；iOS Safari 要求 AudioContext 的首次 play 必须发生在同步用户手势帧内，`resume().then(...)` 回调已脱离手势帧，在其中调用 `start()` 无效
+
+---
+
 ## v1.0.3 — 2026-05-04
 
 ### Debug

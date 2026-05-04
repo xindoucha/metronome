@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════
    State
 ════════════════════════════════════════════ */
-console.log('[app] script loaded v1.0.2');
+console.log('[app] script loaded v1.0.4');
 let bpm=120, beats=4, noteValue=4, subdiv='1', sound='classic', vol=0.8;
 let playing=false, isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 // accentLevels: 0=strong,1=normal,2=ghost,3=mute
@@ -218,12 +218,13 @@ function flashBeat(idx){
 function startM(){
   const c=AC();
   console.log('[startM] called, state:', c.state, 'currentTime:', c.currentTime);
+  // Must call src.start() SYNCHRONOUSLY inside the user gesture for iOS audio unlock
+  const buf=c.createBuffer(1,Math.ceil(c.sampleRate*.1),c.sampleRate);
+  const src=c.createBufferSource();
+  src.buffer=buf; src.connect(c.destination); src.start(0);
+  console.log('[startM] silent buffer started (sync, in user gesture)');
   const begin=()=>{
     console.log('[startM] begin() fired, state:', c.state, 'currentTime:', c.currentTime);
-    const buf=c.createBuffer(1,Math.ceil(c.sampleRate*.1),c.sampleRate);
-    const src=c.createBufferSource();
-    src.buffer=buf; src.connect(c.destination); src.start(0);
-    console.log('[startM] silent buffer started');
     currentBeat=0; nextBeatTime=c.currentTime+.3; beatQueue=[];
     console.log('[startM] nextBeatTime set to:', nextBeatTime);
     sched(); rafID=requestAnimationFrame(draw);
