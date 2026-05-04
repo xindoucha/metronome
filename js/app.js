@@ -499,7 +499,21 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Escape') closeAllSheets();
 });
 
-// iOS Safari: unlock AudioContext on first touch
-document.addEventListener('touchstart', ()=>{
-  const c=AC(); if(c.state==='suspended') c.resume();
-}, {once:true, passive:true});
+// iOS Safari: unlock AudioContext — resume() alone is insufficient;
+// must also exercise the audio graph with a silent buffer.
+let _audioUnlocked = false;
+function iosUnlock() {
+  if (_audioUnlocked) return;
+  const c = AC();
+  c.resume().then(() => {
+    const buf = c.createBuffer(1, 1, c.sampleRate);
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    src.connect(c.destination);
+    src.start(0);
+    _audioUnlocked = true;
+  });
+}
+document.addEventListener('touchstart', iosUnlock, {passive: true});
+document.addEventListener('touchend',   iosUnlock, {passive: true});
+document.addEventListener('click',      iosUnlock);
