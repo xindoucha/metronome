@@ -207,7 +207,7 @@ function flashBeat(idx){
 function startM(){
   const c=AC();
   const begin=()=>{
-    currentBeat=0; nextBeatTime=c.currentTime+.06; beatQueue=[];
+    currentBeat=0; nextBeatTime=c.currentTime+.3; beatQueue=[];
     sched(); rafID=requestAnimationFrame(draw);
   };
   if(c.state==='suspended') c.resume().then(begin);
@@ -499,19 +499,18 @@ document.addEventListener('keydown',e=>{
   if(e.code==='Escape') closeAllSheets();
 });
 
-// iOS Safari: unlock AudioContext — resume() alone is insufficient;
-// must also exercise the audio graph with a silent buffer.
-let _audioUnlocked = false;
+// iOS Safari: resume() alone is not enough — must exercise the audio graph
+// with a real buffer. Check state each time so re-suspension (background/lock)
+// is handled on the next gesture rather than being skipped by a stale flag.
 function iosUnlock() {
-  if (_audioUnlocked) return;
   const c = AC();
+  if (c.state !== 'suspended') return;
   c.resume().then(() => {
-    const buf = c.createBuffer(1, 1, c.sampleRate);
+    const buf = c.createBuffer(1, Math.ceil(c.sampleRate * 0.1), c.sampleRate);
     const src = c.createBufferSource();
     src.buffer = buf;
     src.connect(c.destination);
     src.start(0);
-    _audioUnlocked = true;
   });
 }
 document.addEventListener('touchstart', iosUnlock, {passive: true});
