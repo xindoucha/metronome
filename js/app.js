@@ -1,6 +1,7 @@
 /* ════════════════════════════════════════════
    State
 ════════════════════════════════════════════ */
+console.log('[app] script loaded v1.0.2');
 let bpm=120, beats=4, noteValue=4, subdiv='1', sound='classic', vol=0.8;
 let playing=false, isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 // accentLevels: 0=strong,1=normal,2=ghost,3=mute
