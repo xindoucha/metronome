@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>节拍器 Metronome</title>
-  <link rel="stylesheet" href="css/style.css?v=1.1.0">
+  <link rel="stylesheet" href="css/style.css?v=1.1.1">
 </head>
 <body>
 
@@ -175,12 +175,7 @@
         <span>建议 70 → 90 BPM</span>
         <button class="use-exercise" data-bpm="70" data-subdiv="1">套用</button>
       </div>
-      <div class="drum-score" aria-label="四分音符鼓谱">
-        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
-        <div class="score-row"><b>HH</b><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span></div>
-        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
-        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      </div>
+      <div class="drum-score" data-score="quarter" aria-label="四分音符鼓谱"></div>
     </article>
 
     <article class="exercise-card">
@@ -195,12 +190,7 @@
         <span>建议 70 → 100 BPM</span>
         <button class="use-exercise" data-bpm="80" data-subdiv="2">套用</button>
       </div>
-      <div class="drum-score" aria-label="八分音符鼓谱">
-        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
-        <div class="score-row"><b>HH</b><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span></div>
-        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
-        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span>x</span><span></span><span></span><span></span><span></span><span></span></div>
-      </div>
+      <div class="drum-score" data-score="eighth" aria-label="八分音符鼓谱"></div>
     </article>
 
     <article class="exercise-card">
@@ -215,12 +205,7 @@
         <span>建议 55 → 80 BPM</span>
         <button class="use-exercise" data-bpm="60" data-subdiv="4">套用</button>
       </div>
-      <div class="drum-score dense" aria-label="十六分音符鼓谱">
-        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
-        <div class="score-row"><b>HH</b><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span></div>
-        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
-        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span>o</span><span></span><span></span><span>x</span><span></span><span></span><span></span><span></span></div>
-      </div>
+      <div class="drum-score" data-score="sixteenth" aria-label="十六分音符鼓谱"></div>
     </article>
 
     <article class="exercise-card">
@@ -235,12 +220,7 @@
         <span>建议 65 → 90 BPM</span>
         <button class="use-exercise" data-bpm="72" data-subdiv="2">套用</button>
       </div>
-      <div class="drum-score" aria-label="四分到八分切换鼓谱">
-        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
-        <div class="score-row"><b>HH</b><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span></div>
-        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
-        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      </div>
+      <div class="drum-score" data-score="quarter-eighth" aria-label="四分到八分切换鼓谱"></div>
     </article>
 
     <article class="exercise-card">
@@ -255,12 +235,7 @@
         <span>建议 55 → 75 BPM</span>
         <button class="use-exercise" data-bpm="64" data-subdiv="4">套用</button>
       </div>
-      <div class="drum-score dense" aria-label="八分到十六分切换鼓谱">
-        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
-        <div class="score-row"><b>HH</b><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span></div>
-        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
-        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span></div>
-      </div>
+      <div class="drum-score" data-score="eighth-sixteenth" aria-label="八分到十六分切换鼓谱"></div>
     </article>
 
     <article class="exercise-card">
@@ -275,17 +250,12 @@
         <span>建议 60 → 85 BPM</span>
         <button class="use-exercise" data-bpm="68" data-subdiv="4">套用</button>
       </div>
-      <div class="practice-sequence">
-        <span>第 1 小节：四分</span>
-        <span>第 2 小节：八分</span>
-        <span>第 3 小节：十六分</span>
-        <span>第 4 小节：自由切换后回到四分</span>
-      </div>
+      <div class="drum-score" data-score="mixed" aria-label="综合循环鼓谱"></div>
     </article>
   </section>
 
   <!-- Footer -->
-  <div class="card-footer">v1.1.0</div>
+  <div class="card-footer">v1.1.1</div>
 
 </div><!-- /card -->
 
@@ -413,6 +383,6 @@
   </div>
 </div>
 
-<script src="js/app.js?v=1.1.0" defer></script>
+<script src="js/app.js?v=1.1.1" defer></script>
 </body>
 </html>

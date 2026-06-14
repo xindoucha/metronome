@@ -306,50 +306,51 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   color: var(--accent); border-color: var(--accent); background: var(--accent-bg);
 }
 .drum-score {
-  padding: 9px 8px 8px;
+  padding: 10px 8px;
   border-radius: 10px;
   background: var(--card2);
   border: 1px solid var(--border);
   overflow-x: auto;
 }
-.score-counts,
-.score-row {
-  display: grid;
-  grid-template-columns: 28px repeat(16, minmax(18px, 1fr));
-  min-width: 382px;
+.drum-staff {
+  display: block;
+  width: 100%;
+  min-width: 390px;
+  height: auto;
+  color: var(--text);
 }
-.score-counts { color: var(--text3); font-size: 10px; font-weight: 800; }
-.score-counts::before { content: ""; }
-.score-counts span,
-.score-row span {
-  min-height: 22px;
-  display: flex; align-items: center; justify-content: center;
-  border-left: 1px solid color-mix(in srgb,var(--border) 70%,transparent);
+.staff-line,
+.staff-barline,
+.staff-stem,
+.staff-beam,
+.staff-clef {
+  stroke: currentColor;
 }
-.score-counts span:nth-child(4n+2),
-.score-row span:nth-child(4n+2) {
-  border-left-color: var(--border);
+.staff-line { stroke-width: 1; opacity: .5; }
+.staff-barline { stroke-width: 1.2; opacity: .65; }
+.staff-stem { stroke-width: 1.7; stroke-linecap: round; }
+.staff-beam { stroke-width: 4; stroke-linecap: butt; }
+.staff-note {
+  fill: var(--card);
+  stroke: currentColor;
+  stroke-width: 1.6;
 }
-.score-row {
-  align-items: center;
-  border-top: 1px solid color-mix(in srgb,var(--border) 70%,transparent);
+.staff-note.filled { fill: currentColor; }
+.staff-x {
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
 }
-.score-row b {
-  color: var(--text2); font-size: 10px; font-weight: 900;
-  display: flex; align-items: center;
+.staff-label,
+.staff-time,
+.staff-count {
+  fill: var(--text2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  font-weight: 800;
 }
-.score-row span {
-  color: var(--text); font-size: 13px; font-weight: 900;
-}
-.drum-score.dense .score-row span { font-size: 12px; }
-.practice-sequence {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
-}
-.practice-sequence span {
-  padding: 9px 10px; border-radius: 10px;
-  background: var(--card2); border: 1px solid var(--border);
-  color: var(--text2); font-size: 12px; font-weight: 700;
-}
+.staff-label { font-size: 10px; fill: var(--text3); }
+.staff-time { font-size: 15px; fill: var(--text); }
+.staff-count { font-size: 10px; fill: var(--text3); }
 
 /* ── Sheet system ── */
 .backdrop {
