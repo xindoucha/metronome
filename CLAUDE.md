@@ -30,6 +30,7 @@ type 取值：`feat` / `fix` / `style` / `refactor` / `docs` / `chore`
 index.html      页面结构
 css/style.css   所有样式
 js/app.js       所有逻辑（Web Audio 调度、UI 交互）
+js/practice.js  架子鼓练习谱数据与 SVG 鼓谱渲染
 DESIGN.md       功能与技术设计说明
 CHANGELOG.md    版本历史
 ```

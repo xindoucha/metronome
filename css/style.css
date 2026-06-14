@@ -306,16 +306,17 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   color: var(--accent); border-color: var(--accent); background: var(--accent-bg);
 }
 .drum-score {
-  padding: 10px 8px;
-  border-radius: 10px;
-  background: var(--card2);
-  border: 1px solid var(--border);
+  padding: 10px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb,var(--card) 72%,var(--card2)), var(--card2));
+  border: 1.5px solid var(--border);
   overflow-x: auto;
 }
 .drum-staff {
   display: block;
   width: 100%;
-  min-width: 390px;
+  min-width: 420px;
   height: auto;
   color: var(--text);
 }
@@ -326,31 +327,35 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 .staff-clef {
   stroke: currentColor;
 }
-.staff-line { stroke-width: 1; opacity: .5; }
-.staff-barline { stroke-width: 1.2; opacity: .65; }
-.staff-stem { stroke-width: 1.7; stroke-linecap: round; }
-.staff-beam { stroke-width: 4; stroke-linecap: butt; }
-.staff-note {
-  fill: var(--card);
-  stroke: currentColor;
-  stroke-width: 1.6;
+.staff-line { stroke-width: 1; opacity: .42; }
+.staff-barline { stroke-width: 1.15; opacity: .58; }
+.staff-barline.final { stroke-width: 2.4; opacity: .75; }
+.staff-stem { stroke-width: 1.55; stroke-linecap: round; opacity: .95; }
+.staff-stem.down { opacity: .75; }
+.staff-beam { stroke-width: 4.2; stroke-linecap: butt; opacity: .95; }
+.staff-clef {
+  fill: none;
+  stroke-width: 2.2;
+  opacity: .8;
 }
-.staff-note.filled { fill: currentColor; }
+.staff-note {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
 .staff-x {
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.9;
   stroke-linecap: round;
 }
-.staff-label,
 .staff-time,
 .staff-count {
   fill: var(--text2);
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
   font-weight: 800;
 }
-.staff-label { font-size: 10px; fill: var(--text3); }
 .staff-time { font-size: 15px; fill: var(--text); }
-.staff-count { font-size: 10px; fill: var(--text3); }
+.staff-count { font-size: 10px; fill: var(--text3); opacity: .85; }
 
 /* ── Sheet system ── */
 .backdrop {
