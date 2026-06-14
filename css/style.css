@@ -104,6 +104,28 @@ body {
 .sw-thumb { width: 14px; height: 14px; background: #fff; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform .3s; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
 .sw-track.on .sw-thumb { transform: translateX(18px); }
 
+/* ── Main tabs ── */
+.app-tabs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  padding: 10px 12px;
+  background: var(--card2);
+  border-bottom: 1.5px solid var(--border);
+}
+.app-tab {
+  height: 36px; border-radius: 10px;
+  border: 1.5px solid transparent; background: transparent;
+  color: var(--text2); font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .15s; touch-action: manipulation;
+}
+.app-tab:hover:not(.active) { color: var(--text); background: var(--card); }
+.app-tab.active {
+  background: var(--card); color: var(--accent);
+  border-color: var(--border);
+  box-shadow: 0 4px 10px rgba(0,0,0,.04);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
 /* ── Inner body ── */
 .body { padding: 14px 20px 22px; }
 
@@ -163,7 +185,8 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 .mini-dot.l3 { background: var(--border); }
 
 /* ── Subdivision ── */
-.sub-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }.sub-btn {
+.sub-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
+.sub-btn {
   padding: 9px 3px 7px; border-radius: 10px;
   border: 1.5px solid var(--border); background: var(--card2);
   color: var(--text2); font-size: 11px; font-weight: 600;
@@ -212,6 +235,120 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   font-size: 11px; font-weight: 500; letter-spacing: .5px;
   color: var(--text3);
   border-top: 1px solid var(--border);
+}
+
+/* ── Practice tab ── */
+.practice-panel { padding: 16px 16px 20px; }
+.practice-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  margin-bottom: 12px;
+}
+.practice-kicker {
+  font-size: 10px; font-weight: 800; letter-spacing: 1.4px;
+  color: var(--accent); margin-bottom: 4px;
+}
+.practice-head h1 {
+  font-size: 21px; line-height: 1.2; letter-spacing: 0; color: var(--text);
+}
+.practice-badge {
+  flex-shrink: 0;
+  padding: 5px 9px; border-radius: 999px;
+  color: var(--accent); background: var(--accent-bg);
+  font-size: 11px; font-weight: 800;
+}
+.practice-tips {
+  display: grid; gap: 6px; margin-bottom: 12px;
+}
+.practice-tips span {
+  padding: 8px 10px; border-radius: 10px;
+  background: var(--card2); border: 1px solid var(--border);
+  color: var(--text2); font-size: 12px; font-weight: 600;
+}
+.exercise-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  padding: 13px;
+  margin-bottom: 12px;
+}
+.exercise-meta {
+  display: grid; grid-template-columns: 34px 1fr; gap: 10px;
+  align-items: start; margin-bottom: 10px;
+}
+.exercise-step {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-bg); color: var(--accent);
+  font-size: 13px; font-weight: 800;
+}
+.exercise-meta h2 {
+  font-size: 15px; line-height: 1.25; margin-bottom: 3px;
+  color: var(--text);
+}
+.exercise-meta p {
+  color: var(--text2); font-size: 12px; line-height: 1.45;
+}
+.exercise-actions {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-bottom: 10px;
+}
+.exercise-actions span {
+  color: var(--text3); font-size: 11px; font-weight: 700;
+}
+.use-exercise {
+  flex-shrink: 0;
+  padding: 7px 10px; border-radius: 9px;
+  border: 1.5px solid var(--border); background: var(--card2);
+  color: var(--text2); font-size: 12px; font-weight: 800;
+  cursor: pointer; transition: all .15s;
+}
+.use-exercise:hover {
+  color: var(--accent); border-color: var(--accent); background: var(--accent-bg);
+}
+.drum-score {
+  padding: 9px 8px 8px;
+  border-radius: 10px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+}
+.score-counts,
+.score-row {
+  display: grid;
+  grid-template-columns: 28px repeat(16, minmax(18px, 1fr));
+  min-width: 382px;
+}
+.score-counts { color: var(--text3); font-size: 10px; font-weight: 800; }
+.score-counts::before { content: ""; }
+.score-counts span,
+.score-row span {
+  min-height: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border-left: 1px solid color-mix(in srgb,var(--border) 70%,transparent);
+}
+.score-counts span:nth-child(4n+2),
+.score-row span:nth-child(4n+2) {
+  border-left-color: var(--border);
+}
+.score-row {
+  align-items: center;
+  border-top: 1px solid color-mix(in srgb,var(--border) 70%,transparent);
+}
+.score-row b {
+  color: var(--text2); font-size: 10px; font-weight: 900;
+  display: flex; align-items: center;
+}
+.score-row span {
+  color: var(--text); font-size: 13px; font-weight: 900;
+}
+.drum-score.dense .score-row span { font-size: 12px; }
+.practice-sequence {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
+}
+.practice-sequence span {
+  padding: 9px 10px; border-radius: 10px;
+  background: var(--card2); border: 1px solid var(--border);
+  color: var(--text2); font-size: 12px; font-weight: 700;
 }
 
 /* ── Sheet system ── */
@@ -359,4 +496,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   .play-btn { height: 64px; font-size: 17px; }
   .ts-big { font-size: 42px; }
   .al-btn { font-size: 10px; }
+  .practice-panel { padding: 14px 12px 18px; }
+  .practice-head h1 { font-size: 18px; }
+  .practice-sequence { grid-template-columns: 1fr; }
 }

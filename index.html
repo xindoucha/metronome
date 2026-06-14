@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>节拍器 Metronome</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=1.1.0">
 </head>
 <body>
 
@@ -26,47 +26,53 @@
     </div>
   </div>
 
-  <!-- Beat indicator -->
-  <div class="beat-indicator" id="beatIndicator"></div>
+  <div class="app-tabs" role="tablist" aria-label="功能切换">
+    <button class="app-tab active" id="tabMetronome" data-tab="metronome" role="tab" aria-selected="true" aria-controls="panelMetronome">节拍器</button>
+    <button class="app-tab" id="tabPractice" data-tab="practice" role="tab" aria-selected="false" aria-controls="panelPractice">练习谱</button>
+  </div>
 
-  <!-- Body -->
-  <div class="body">
+  <section class="tab-panel active" id="panelMetronome" role="tabpanel" aria-labelledby="tabMetronome">
+    <!-- Beat indicator -->
+    <div class="beat-indicator" id="beatIndicator"></div>
 
-    <!-- BPM -->
-    <div class="bpm-row">
-      <button class="adj" id="bpmDn">−</button>
-      <div class="bpm-center">
-        <span class="bpm-num" id="bpmNum" contenteditable="true" inputmode="numeric" spellcheck="false">120</span>
-        <span class="bpm-sub">BPM · <span id="tempoBadge">Allegro</span></span>
+    <!-- Body -->
+    <div class="body">
+
+      <!-- BPM -->
+      <div class="bpm-row">
+        <button class="adj" id="bpmDn">−</button>
+        <div class="bpm-center">
+          <span class="bpm-num" id="bpmNum" contenteditable="true" inputmode="numeric" spellcheck="false">120</span>
+          <span class="bpm-sub">BPM · <span id="tempoBadge">Allegro</span></span>
+        </div>
+        <button class="adj" id="bpmUp">+</button>
       </div>
-      <button class="adj" id="bpmUp">+</button>
-    </div>
-    <div class="slider-wrap">
-      <div class="slider-marks"><span>20</span><span>60</span><span>120</span><span>180</span><span>240</span></div>
-      <input type="range" id="bpmSlider" min="20" max="240" value="120">
-    </div>
+      <div class="slider-wrap">
+        <div class="slider-marks"><span>20</span><span>60</span><span>120</span><span>180</span><span>240</span></div>
+        <input type="range" id="bpmSlider" min="20" max="240" value="120">
+      </div>
 
-    <!-- Config row -->
-    <div class="config-row">
-      <button class="cfg-btn" id="btnTs">
-        <span class="cfg-ico">⬛</span>
-        <span class="cfg-lbl">拍号</span>
-        <span class="cfg-val" id="cfgTs">4/4</span>
-      </button>
-      <button class="cfg-btn" id="btnSound">
-        <span class="cfg-ico">🎵</span>
-        <span class="cfg-lbl">音色</span>
-        <span class="cfg-val" id="cfgSound">经典</span>
-      </button>
-      <button class="cfg-btn" id="btnAccent">
-        <span class="cfg-ico">🔊</span>
-        <span class="cfg-lbl">节拍强弱</span>
-        <div class="cfg-dots" id="cfgDots"></div>
-      </button>
-    </div>
+      <!-- Config row -->
+      <div class="config-row">
+        <button class="cfg-btn" id="btnTs">
+          <span class="cfg-ico">⬛</span>
+          <span class="cfg-lbl">拍号</span>
+          <span class="cfg-val" id="cfgTs">4/4</span>
+        </button>
+        <button class="cfg-btn" id="btnSound">
+          <span class="cfg-ico">🎵</span>
+          <span class="cfg-lbl">音色</span>
+          <span class="cfg-val" id="cfgSound">经典</span>
+        </button>
+        <button class="cfg-btn" id="btnAccent">
+          <span class="cfg-ico">🔊</span>
+          <span class="cfg-lbl">节拍强弱</span>
+          <div class="cfg-dots" id="cfgDots"></div>
+        </button>
+      </div>
 
-    <!-- Subdivision -->
-    <div class="sub-row" id="subRow">
+      <!-- Subdivision -->
+      <div class="sub-row" id="subRow">
 
       <!-- ×1 四分音符：符头 + 符干 -->
       <button class="sub-btn sel" data-d="1">
@@ -120,29 +126,166 @@
         <span>十六</span>
       </button>
 
+      </div>
+
+      <div class="div"></div>
+
+      <!-- Volume -->
+      <div class="vol-row">
+        <span class="vol-ico">🔈</span>
+        <input type="range" id="volSlider" min="0" max="100" value="80">
+        <span class="vol-ico">🔊</span>
+      </div>
+
+      <!-- Tap & Play -->
+      <div class="div" style="margin: 12px 0 10px"></div>
+      <button class="tap-btn" id="tapBtn">点击节拍 / Tap Tempo</button>
+      <button class="play-btn" id="playBtn">
+        <span class="play-ico" id="playIcon">▶</span>
+        <span id="playTxt">开始 / Start</span>
+      </button>
+
+    </div>
+  </section>
+
+  <section class="tab-panel practice-panel" id="panelPractice" role="tabpanel" aria-labelledby="tabPractice">
+    <div class="practice-head">
+      <div>
+        <p class="practice-kicker">DRUM FUNDAMENTALS</p>
+        <h1>架子鼓基本功练习</h1>
+      </div>
+      <span class="practice-badge">Beginner</span>
     </div>
 
-    <div class="div"></div>
-
-    <!-- Volume -->
-    <div class="vol-row">
-      <span class="vol-ico">🔈</span>
-      <input type="range" id="volSlider" min="0" max="100" value="80">
-      <span class="vol-ico">🔊</span>
+    <div class="practice-tips">
+      <span>先口数，再上手脚</span>
+      <span>每条连续 4 小节无错再提速</span>
+      <span>右手保持稳定，军鼓和底鼓尽量放松</span>
     </div>
 
-    <!-- Tap & Play -->
-    <div class="div" style="margin: 12px 0 10px"></div>
-    <button class="tap-btn" id="tapBtn">点击节拍 / Tap Tempo</button>
-    <button class="play-btn" id="playBtn">
-      <span class="play-ico" id="playIcon">▶</span>
-      <span id="playTxt">开始 / Start</span>
-    </button>
+    <article class="exercise-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">01</span>
+        <div>
+          <h2>四分音符稳拍</h2>
+          <p>目标：建立 1 2 3 4 的落点，底鼓和军鼓先稳住。</p>
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span>建议 70 → 90 BPM</span>
+        <button class="use-exercise" data-bpm="70" data-subdiv="1">套用</button>
+      </div>
+      <div class="drum-score" aria-label="四分音符鼓谱">
+        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
+        <div class="score-row"><b>HH</b><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span></div>
+        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
+        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </article>
 
-  </div>
+    <article class="exercise-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">02</span>
+        <div>
+          <h2>八分音符律动</h2>
+          <p>目标：右手打满 1 & 2 &，保持二四拍军鼓清晰。</p>
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span>建议 70 → 100 BPM</span>
+        <button class="use-exercise" data-bpm="80" data-subdiv="2">套用</button>
+      </div>
+      <div class="drum-score" aria-label="八分音符鼓谱">
+        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
+        <div class="score-row"><b>HH</b><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span></div>
+        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
+        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span>x</span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </article>
+
+    <article class="exercise-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">03</span>
+        <div>
+          <h2>十六分音符控制</h2>
+          <p>目标：右手连续十六分，脚鼓只放在明确位置，别抢拍。</p>
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span>建议 55 → 80 BPM</span>
+        <button class="use-exercise" data-bpm="60" data-subdiv="4">套用</button>
+      </div>
+      <div class="drum-score dense" aria-label="十六分音符鼓谱">
+        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
+        <div class="score-row"><b>HH</b><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span></div>
+        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
+        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span>o</span><span></span><span></span><span>x</span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </article>
+
+    <article class="exercise-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">04</span>
+        <div>
+          <h2>四分 → 八分切换</h2>
+          <p>目标：前两拍四分，后两拍八分，切换时速度感不变。</p>
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span>建议 65 → 90 BPM</span>
+        <button class="use-exercise" data-bpm="72" data-subdiv="2">套用</button>
+      </div>
+      <div class="drum-score" aria-label="四分到八分切换鼓谱">
+        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
+        <div class="score-row"><b>HH</b><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span></span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span></div>
+        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
+        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </article>
+
+    <article class="exercise-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">05</span>
+        <div>
+          <h2>八分 → 十六分切换</h2>
+          <p>目标：一小节内完成密度升级，手腕保持小动作。</p>
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span>建议 55 → 75 BPM</span>
+        <button class="use-exercise" data-bpm="64" data-subdiv="4">套用</button>
+      </div>
+      <div class="drum-score dense" aria-label="八分到十六分切换鼓谱">
+        <div class="score-counts"><span>1</span><span>e</span><span>&</span><span>a</span><span>2</span><span>e</span><span>&</span><span>a</span><span>3</span><span>e</span><span>&</span><span>a</span><span>4</span><span>e</span><span>&</span><span>a</span></div>
+        <div class="score-row"><b>HH</b><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span></span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span><span>x</span></div>
+        <div class="score-row"><b>SD</b><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span></div>
+        <div class="score-row"><b>BD</b><span>o</span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span><span></span><span></span><span></span><span></span><span>o</span><span></span></div>
+      </div>
+    </article>
+
+    <article class="exercise-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">06</span>
+        <div>
+          <h2>综合循环</h2>
+          <p>目标：四分、八分、十六分交替出现，作为初学者日常热身。</p>
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span>建议 60 → 85 BPM</span>
+        <button class="use-exercise" data-bpm="68" data-subdiv="4">套用</button>
+      </div>
+      <div class="practice-sequence">
+        <span>第 1 小节：四分</span>
+        <span>第 2 小节：八分</span>
+        <span>第 3 小节：十六分</span>
+        <span>第 4 小节：自由切换后回到四分</span>
+      </div>
+    </article>
+  </section>
 
   <!-- Footer -->
-  <div class="card-footer">v1.0.5</div>
+  <div class="card-footer">v1.1.0</div>
 
 </div><!-- /card -->
 
@@ -270,6 +413,6 @@
   </div>
 </div>
 
-<script src="js/app.js" defer></script>
+<script src="js/app.js?v=1.1.0" defer></script>
 </body>
 </html>

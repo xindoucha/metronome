@@ -239,6 +239,17 @@ function togglePlay(){
   else { stopM(); btn.classList.remove('on'); document.getElementById('playIcon').textContent='▶'; document.getElementById('playTxt').textContent='开始 / Start'; }
 }
 
+function setAppTab(name){
+  document.querySelectorAll('.app-tab').forEach(btn=>{
+    const active=btn.dataset.tab===name;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-selected',String(active));
+  });
+  document.querySelectorAll('.tab-panel').forEach(panel=>{
+    panel.classList.toggle('active',panel.id===`panel${name[0].toUpperCase()}${name.slice(1)}`);
+  });
+}
+
 /* ════════════════════════════════════════════
    BPM
 ════════════════════════════════════════════ */
@@ -424,6 +435,11 @@ renderIndicator();
 ════════════════════════════════════════════ */
 document.getElementById('playBtn').addEventListener('click',togglePlay);
 
+// App tabs
+document.querySelectorAll('.app-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>setAppTab(btn.dataset.tab));
+});
+
 // Theme
 const tw=document.getElementById('themeWrap');
 tw.addEventListener('click',()=>{ isDark=!isDark; applyTheme(); });
@@ -452,6 +468,16 @@ document.getElementById('subRow').addEventListener('click',e=>{
   const b=e.target.closest('.sub-btn'); if(!b)return;
   document.querySelectorAll('#subRow .sub-btn').forEach(x=>x.classList.remove('sel'));
   b.classList.add('sel'); subdiv=b.dataset.d;
+});
+
+// Practice exercises
+document.querySelectorAll('.use-exercise').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    setBPM(+btn.dataset.bpm);
+    subdiv=btn.dataset.subdiv;
+    document.querySelectorAll('#subRow .sub-btn').forEach(x=>x.classList.toggle('sel',x.dataset.d===subdiv));
+    setAppTab('metronome');
+  });
 });
 
 // Config buttons → open sheets
