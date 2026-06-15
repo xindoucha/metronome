@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════
-   Drum practice notation
+   VexFlow drum practice notation
 ════════════════════════════════════════════ */
 const SCORE_PATTERNS={
   quarter: {
@@ -14,116 +14,179 @@ const SCORE_PATTERNS={
     hh:[0,2,4,6,8,10,12,14],
     sd:[4,12],
     bd:[0,8,10],
-    beams:[[0,2,1],[4,6,1],[8,10,1],[12,14,1]]
+    beams:[[0,2],[4,6],[8,10],[12,14]]
   },
   sixteenth: {
     title:'十六分控制',
     hh:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
     sd:[4,12],
     bd:[0,6,8,11],
-    beams:[[0,3,2],[4,7,2],[8,11,2],[12,15,2]]
+    beams:[[0,3],[4,7],[8,11],[12,15]]
   },
   'quarter-eighth': {
     title:'四分到八分',
     hh:[0,4,8,10,12,14],
     sd:[4,12],
     bd:[0,8],
-    beams:[[8,10,1],[12,14,1]]
+    beams:[[8,10],[12,14]]
   },
   'eighth-sixteenth': {
     title:'八分到十六分',
     hh:[0,2,4,6,8,9,10,11,12,13,14,15],
     sd:[4,12],
     bd:[0,8,14],
-    beams:[[0,2,1],[4,6,1],[8,11,2],[12,15,2]]
+    beams:[[0,2],[4,6],[8,11],[12,15]]
   },
   mixed: {
     title:'综合循环',
     hh:[0,4,6,8,9,10,11,12,14],
     sd:[4,12],
     bd:[0,8,11],
-    beams:[[4,6,1],[8,11,2],[12,14,1]]
+    beams:[[4,6],[8,11],[12,14]]
   }
 };
 
+const DRUM_KEYS={
+  hh:'g/5',
+  sd:'c/5',
+  bd:'f/4'
+};
+
 function renderDrumScores(){
+  const VF=getVexFlow();
   document.querySelectorAll('[data-score]').forEach(box=>{
     const pattern=SCORE_PATTERNS[box.dataset.score];
-    if(pattern) box.innerHTML=drumScoreSvg(pattern);
+    if(!pattern)return;
+    box.innerHTML='';
+    if(!VF){
+      box.innerHTML='<div class="notation-error">鼓谱引擎加载失败，请刷新页面</div>';
+      return;
+    }
+    renderVexFlowScore(box,pattern,VF);
   });
 }
 
-function drumScoreSvg(pattern){
-  const xs=Array.from({length:16},(_,i)=>92+i*19);
-  const staff={left:66,right:398,top:35,gap:8.5};
-  const y={
-    hh:staff.top-16,
-    sd:staff.top+staff.gap*2,
-    bd:staff.top+staff.gap*4+13
-  };
-  return `
-    <svg class="drum-staff" viewBox="0 0 420 104" role="img" aria-label="${pattern.title}鼓谱">
-      ${scoreBackground(staff)}
-      ${percussionClef(39,staff.top+3)}
-      <text class="staff-time" x="57" y="49" text-anchor="middle">4</text>
-      <text class="staff-time" x="57" y="66" text-anchor="middle">4</text>
-      ${measureNumbers(xs)}
-      ${stems(pattern,xs,y)}
-      ${beams(pattern,xs)}
-      ${hhNotes(pattern.hh,xs,y.hh)}
-      ${roundNotes(pattern.sd,xs,y.sd,'snare')}
-      ${roundNotes(pattern.bd,xs,y.bd,'kick')}
-    </svg>`;
+function getVexFlow(){
+  if(!window.Vex)return null;
+  return window.Vex.Flow||window.Vex;
 }
 
-function scoreBackground(staff){
-  const lines=Array.from({length:5},(_,i)=>{
-    const y=staff.top+i*staff.gap;
-    return `<line class="staff-line" x1="${staff.left}" y1="${y}" x2="${staff.right}" y2="${y}"/>`;
-  }).join('');
-  const bars=[staff.left,staff.left+83,staff.left+166,staff.left+249,staff.right].map((x,i)=>{
-    const cls=i===4?'staff-barline final':'staff-barline';
-    return `<line class="${cls}" x1="${x}" y1="${staff.top}" x2="${x}" y2="${staff.top+staff.gap*4}"/>`;
-  }).join('');
-  return lines+bars;
+function renderVexFlowScore(box,pattern,VF){
+  const width=440, height=142;
+  const renderer=new VF.Renderer(box,VF.Renderer.Backends.SVG);
+  renderer.resize(width,height);
+  const context=renderer.getContext();
+  context.setFont('Arial',10,'');
+
+  const stave=new VF.Stave(18,30,400);
+  stave.addClef('percussion').addTimeSignature('4/4');
+  stave.setContext(context).draw();
+
+  const {notes,positionToNote}=buildNotes(pattern,VF);
+  const voice=new VF.Voice({num_beats:4,beat_value:4});
+  voice.addTickables(notes);
+
+  new VF.Formatter().joinVoices([voice]).format([voice],310);
+  voice.draw(context,stave);
+
+  buildBeams(pattern,positionToNote,VF).forEach(beam=>beam.setContext(context).draw());
+  addMeasureLabels(box);
+  polishPercussionHeads(box);
 }
 
-function percussionClef(x,y){
-  return `
-    <rect class="staff-clef" x="${x}" y="${y}" width="4" height="25" rx="1"/>
-    <rect class="staff-clef" x="${x+9}" y="${y}" width="4" height="25" rx="1"/>`;
+function buildNotes(pattern,VF){
+  const positions=eventPositions(pattern);
+  const notes=[];
+  const positionToNote=new Map();
+  positions.forEach((pos,index)=>{
+    const next=positions[index+1]??16;
+    const duration=durationFromSlots(next-pos);
+    const keys=keysAt(pattern,pos);
+    const note=new VF.StaveNote({
+      clef:'percussion',
+      keys,
+      duration,
+      stem_direction:1,
+      auto_stem:false
+    });
+    note.__gridPosition=pos;
+    notes.push(note);
+    positionToNote.set(pos,note);
+  });
+  return {notes,positionToNote};
 }
 
-function measureNumbers(xs){
-  return [0,4,8,12].map((idx,i)=>`<text class="staff-count" x="${xs[idx]}" y="94" text-anchor="middle">${i+1}</text>`).join('');
+function eventPositions(pattern){
+  return [...new Set([...pattern.hh,...pattern.sd,...pattern.bd])].sort((a,b)=>a-b);
 }
 
-function stems(pattern,xs,y){
-  const up=[
-    ...pattern.hh.map(i=>`<line class="staff-stem" x1="${xs[i]+5}" y1="${y.hh+2}" x2="${xs[i]+5}" y2="51"/>`),
-    ...pattern.sd.map(i=>`<line class="staff-stem" x1="${xs[i]+5}" y1="${y.sd}" x2="${xs[i]+5}" y2="51"/>`)
-  ].join('');
-  const down=pattern.bd.map(i=>`<line class="staff-stem down" x1="${xs[i]-5}" y1="${y.bd}" x2="${xs[i]-5}" y2="43"/>`).join('');
-  return up+down;
+function keysAt(pattern,pos){
+  const keys=[];
+  if(pattern.hh.includes(pos))keys.push(DRUM_KEYS.hh);
+  if(pattern.sd.includes(pos))keys.push(DRUM_KEYS.sd);
+  if(pattern.bd.includes(pos))keys.push(DRUM_KEYS.bd);
+  return keys;
 }
 
-function beams(pattern,xs){
-  return (pattern.beams||[]).map(([start,end,count])=>{
-    const x1=xs[start]+5, x2=xs[end]+5;
-    const main=`<line class="staff-beam" x1="${x1}" y1="50" x2="${x2}" y2="50"/>`;
-    const extra=count>1?`<line class="staff-beam" x1="${x1}" y1="55" x2="${x2}" y2="55"/>`:'';
-    return main+extra;
-  }).join('');
+function durationFromSlots(slots){
+  if(slots>=4)return 'q';
+  if(slots===2)return '8';
+  return '16';
 }
 
-function hhNotes(values,xs,y){
-  return values.map(i=>`
-    <g class="staff-x">
-      <line x1="${xs[i]-5}" y1="${y-5}" x2="${xs[i]+5}" y2="${y+5}"/>
-      <line x1="${xs[i]+5}" y1="${y-5}" x2="${xs[i]-5}" y2="${y+5}"/>
-    </g>`).join('');
+function buildBeams(pattern,positionToNote,VF){
+  return (pattern.beams||[]).map(([start,end])=>{
+    const notes=[];
+    for(let pos=start;pos<=end;pos++){
+      const note=positionToNote.get(pos);
+      if(note)notes.push(note);
+    }
+    return notes.length>1?new VF.Beam(notes):null;
+  }).filter(Boolean);
 }
 
-function roundNotes(values,xs,y,type){
-  return values.map(i=>`<ellipse class="staff-note ${type}" cx="${xs[i]}" cy="${y}" rx="5.6" ry="4.1" transform="rotate(-18 ${xs[i]} ${y})"/>`).join('');
+function addMeasureLabels(box){
+  const svg=box.querySelector('svg');
+  if(!svg)return;
+  const ns='http://www.w3.org/2000/svg';
+  [1,2,3,4].forEach((beat,i)=>{
+    const text=document.createElementNS(ns,'text');
+    text.setAttribute('class','vf-beat-label');
+    text.setAttribute('x',String(108+i*76));
+    text.setAttribute('y','128');
+    text.setAttribute('text-anchor','middle');
+    text.textContent=beat;
+    svg.appendChild(text);
+  });
+}
+
+function polishPercussionHeads(box){
+  const svg=box.querySelector('svg');
+  if(!svg)return;
+  svg.classList.add('vexflow-staff');
+  const ns='http://www.w3.org/2000/svg';
+  const heads=[...svg.querySelectorAll('[class*="vf-notehead"]')];
+  heads.forEach(head=>{
+    const path=head.querySelector('path');
+    const d=path?.getAttribute('d')||'';
+    const match=d.match(/M\s*([0-9.]+)\s+([0-9.]+)/);
+    if(!match)return;
+    const cx=Number(match[1])+5;
+    const cy=Number(match[2]);
+    if(cy<80){
+      head.classList.add('vf-hi-hat-head');
+      head.innerHTML='';
+      const a=document.createElementNS(ns,'line');
+      const b=document.createElementNS(ns,'line');
+      a.setAttribute('x1',String(cx-5)); a.setAttribute('y1',String(cy-5));
+      a.setAttribute('x2',String(cx+5)); a.setAttribute('y2',String(cy+5));
+      b.setAttribute('x1',String(cx+5)); b.setAttribute('y1',String(cy-5));
+      b.setAttribute('x2',String(cx-5)); b.setAttribute('y2',String(cy+5));
+      head.append(a,b);
+    } else if(cy>100) {
+      head.classList.add('vf-kick-head');
+    } else {
+      head.classList.add('vf-snare-head');
+    }
+  });
 }

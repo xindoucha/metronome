@@ -306,56 +306,63 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   color: var(--accent); border-color: var(--accent); background: var(--accent-bg);
 }
 .drum-score {
-  padding: 10px;
+  padding: 10px 8px 8px;
   border-radius: 12px;
   background:
     linear-gradient(180deg, color-mix(in srgb,var(--card) 72%,var(--card2)), var(--card2));
   border: 1.5px solid var(--border);
   overflow-x: auto;
 }
-.drum-staff {
+.drum-score svg {
   display: block;
-  width: 100%;
-  min-width: 420px;
-  height: auto;
+  min-width: 440px;
+}
+.drum-score svg,
+.drum-score svg text {
   color: var(--text);
+  fill: var(--text);
 }
-.staff-line,
-.staff-barline,
-.staff-stem,
-.staff-beam,
-.staff-clef {
-  stroke: currentColor;
+.drum-score svg path,
+.drum-score svg line,
+.drum-score svg rect {
+  stroke: var(--text);
 }
-.staff-line { stroke-width: 1; opacity: .42; }
-.staff-barline { stroke-width: 1.15; opacity: .58; }
-.staff-barline.final { stroke-width: 2.4; opacity: .75; }
-.staff-stem { stroke-width: 1.55; stroke-linecap: round; opacity: .95; }
-.staff-stem.down { opacity: .75; }
-.staff-beam { stroke-width: 4.2; stroke-linecap: butt; opacity: .95; }
-.staff-clef {
-  fill: none;
-  stroke-width: 2.2;
-  opacity: .8;
+.drum-score .vf-stavenote path,
+.drum-score .vf-notehead path {
+  fill: var(--text);
+  stroke: var(--text);
 }
-.staff-note {
-  fill: currentColor;
-  stroke: currentColor;
-  stroke-width: 1.4;
+.drum-score .vf-stave path,
+.drum-score .vf-clef path,
+.drum-score .vf-timesignature path {
+  fill: var(--text);
+  stroke: var(--text);
 }
-.staff-x {
-  stroke: currentColor;
+.drum-score .vf-beam path {
+  fill: var(--text);
+}
+.drum-score .vf-hi-hat-head line {
+  stroke: var(--text);
   stroke-width: 1.9;
   stroke-linecap: round;
 }
-.staff-time,
-.staff-count {
-  fill: var(--text2);
-  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-  font-weight: 800;
+.drum-score .vf-snare-head path,
+.drum-score .vf-kick-head path {
+  fill: var(--text);
 }
-.staff-time { font-size: 15px; fill: var(--text); }
-.staff-count { font-size: 10px; fill: var(--text3); opacity: .85; }
+.drum-score .vf-beat-label {
+  fill: var(--text3);
+  font-size: 10px;
+  font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+}
+.drum-score .notation-error {
+  padding: 18px 12px;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
 
 /* ── Sheet system ── */
 .backdrop {
