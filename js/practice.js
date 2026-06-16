@@ -2,6 +2,33 @@
    VexFlow drum practice notation
 ════════════════════════════════════════════ */
 const SCORE_PATTERNS={
+  'pad-single-eighth': {
+    title:'哑鼓垫八分单击',
+    pad:true,
+    hh:[],
+    sd:[0,2,4,6,8,10,12,14],
+    bd:[],
+    beams:[[0,2],[4,6],[8,10],[12,14]],
+    sticking:{0:'R',2:'L',4:'R',6:'L',8:'R',10:'L',12:'R',14:'L'}
+  },
+  'pad-single-sixteenth': {
+    title:'哑鼓垫十六分单击',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'L',2:'R',3:'L',4:'R',5:'L',6:'R',7:'L',8:'R',9:'L',10:'R',11:'L',12:'R',13:'L',14:'R',15:'L'}
+  },
+  'pad-double-sixteenth': {
+    title:'哑鼓垫双击基础',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'R',2:'L',3:'L',4:'R',5:'R',6:'L',7:'L',8:'R',9:'R',10:'L',11:'L',12:'R',13:'R',14:'L',15:'L'}
+  },
   quarter: {
     title:'四分稳拍',
     hh:[0,4,8,12],
@@ -72,7 +99,7 @@ function getVexFlow(){
 }
 
 function renderVexFlowScore(box,pattern,VF){
-  const width=440, height=142;
+  const width=440, height=pattern.sticking?162:142;
   const renderer=new VF.Renderer(box,VF.Renderer.Backends.SVG);
   renderer.resize(width,height);
   const context=renderer.getContext();
@@ -90,7 +117,7 @@ function renderVexFlowScore(box,pattern,VF){
   voice.draw(context,stave);
 
   buildBeams(pattern,positionToNote,VF).forEach(beam=>beam.setContext(context).draw());
-  addMeasureLabels(box);
+  addMeasureLabels(box,pattern);
   polishPercussionHeads(box);
 }
 
@@ -145,15 +172,26 @@ function buildBeams(pattern,positionToNote,VF){
   }).filter(Boolean);
 }
 
-function addMeasureLabels(box){
+function addMeasureLabels(box,pattern){
   const svg=box.querySelector('svg');
   if(!svg)return;
   const ns='http://www.w3.org/2000/svg';
+  if(pattern.sticking){
+    Object.entries(pattern.sticking).forEach(([pos,label])=>{
+      const text=document.createElementNS(ns,'text');
+      text.setAttribute('class',`vf-sticking ${label==='R'?'right':'left'}`);
+      text.setAttribute('x',String(108+Number(pos)*19));
+      text.setAttribute('y','130');
+      text.setAttribute('text-anchor','middle');
+      text.textContent=label;
+      svg.appendChild(text);
+    });
+  }
   [1,2,3,4].forEach((beat,i)=>{
     const text=document.createElementNS(ns,'text');
     text.setAttribute('class','vf-beat-label');
     text.setAttribute('x',String(108+i*76));
-    text.setAttribute('y','128');
+    text.setAttribute('y',pattern.sticking?'150':'128');
     text.setAttribute('text-anchor','middle');
     text.textContent=beat;
     svg.appendChild(text);
