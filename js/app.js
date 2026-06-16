@@ -148,6 +148,85 @@ const SND={
     gn.gain.setValueAtTime(m*.12,t);gn.gain.exponentialRampToValueAtTime(.0001,t+.008);
     on.connect(gn);gn.connect(c.destination);on.start(t);on.stop(t+.01);
   },
+  timer:(c,t,tp,v)=>{
+    const m=v*VM[tp],dur=tp==='accent'?.075:tp==='beat'?.052:.035;
+    const f=tp==='accent'?2350:tp==='beat'?1850:1450;
+    const click=c.createOscillator(),clickGain=c.createGain();
+    click.type='square';
+    click.frequency.setValueAtTime(f,t);
+    click.frequency.exponentialRampToValueAtTime(f*.62,t+dur);
+    clickGain.gain.setValueAtTime(m*.5,t);
+    clickGain.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    click.connect(clickGain);clickGain.connect(c.destination);click.start(t);click.stop(t+dur+.01);
+
+    const r=c.sampleRate,buf=c.createBuffer(1,Math.ceil(r*dur),r),d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*.12));
+    const ns=c.createBufferSource(),bp=c.createBiquadFilter(),ng=c.createGain();
+    ns.buffer=buf;
+    bp.type='bandpass';bp.frequency.value=tp==='accent'?4200:3600;bp.Q.value=7;
+    ng.gain.setValueAtTime(m*.42,t);
+    ng.gain.exponentialRampToValueAtTime(.0001,t+dur*.7);
+    ns.connect(bp);bp.connect(ng);ng.connect(c.destination);ns.start(t);ns.stop(t+dur);
+
+    if(tp==='accent'){
+      const tock=c.createOscillator(),tg=c.createGain();
+      tock.type='triangle';tock.frequency.value=720;
+      tg.gain.setValueAtTime(m*.25,t+.012);
+      tg.gain.exponentialRampToValueAtTime(.0001,t+.09);
+      tock.connect(tg);tg.connect(c.destination);tock.start(t+.012);tock.stop(t+.1);
+    }
+  },
+  drumkit:(c,t,tp,v)=>{
+    const m=v*VM[tp];
+    const hat=(time,amp,dur=.045)=>{
+      const r=c.sampleRate,buf=c.createBuffer(1,Math.ceil(r*dur),r),d=buf.getChannelData(0);
+      for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*.23));
+      const src=c.createBufferSource(),hp=c.createBiquadFilter(),g=c.createGain();
+      src.buffer=buf;hp.type='highpass';hp.frequency.value=6500;
+      g.gain.setValueAtTime(amp,time);
+      g.gain.exponentialRampToValueAtTime(.0001,time+dur);
+      src.connect(hp);hp.connect(g);g.connect(c.destination);src.start(time);src.stop(time+dur+.01);
+    };
+    const snare=(time,amp)=>{
+      const dur=.105,r=c.sampleRate,buf=c.createBuffer(1,Math.ceil(r*dur),r),d=buf.getChannelData(0);
+      for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*.18));
+      const src=c.createBufferSource(),bp=c.createBiquadFilter(),g=c.createGain();
+      src.buffer=buf;bp.type='bandpass';bp.frequency.value=1850;bp.Q.value=.95;
+      g.gain.setValueAtTime(amp,time);
+      g.gain.exponentialRampToValueAtTime(.0001,time+dur);
+      src.connect(bp);bp.connect(g);g.connect(c.destination);src.start(time);src.stop(time+dur+.02);
+      const body=c.createOscillator(),bg=c.createGain();
+      body.type='triangle';body.frequency.value=185;
+      bg.gain.setValueAtTime(amp*.28,time);
+      bg.gain.exponentialRampToValueAtTime(.0001,time+.075);
+      body.connect(bg);bg.connect(c.destination);body.start(time);body.stop(time+.085);
+    };
+    const kick=(time,amp)=>{
+      const o=c.createOscillator(),g=c.createGain(),click=c.createOscillator(),cg=c.createGain();
+      o.type='sine';
+      o.frequency.setValueAtTime(118,time);
+      o.frequency.exponentialRampToValueAtTime(42,time+.09);
+      g.gain.setValueAtTime(amp,time);
+      g.gain.exponentialRampToValueAtTime(.0001,time+.16);
+      o.connect(g);g.connect(c.destination);o.start(time);o.stop(time+.17);
+      click.type='square';click.frequency.value=1500;
+      cg.gain.setValueAtTime(amp*.18,time);
+      cg.gain.exponentialRampToValueAtTime(.0001,time+.012);
+      click.connect(cg);cg.connect(c.destination);click.start(time);click.stop(time+.015);
+    };
+    if(tp==='accent'){
+      kick(t,m*.95);
+      snare(t+.004,m*.58);
+      hat(t,m*.22,.08);
+    } else if(tp==='beat'){
+      snare(t,m*.7);
+      hat(t,m*.16,.05);
+    } else if(tp==='sub'){
+      hat(t,m*.5,.038);
+    } else {
+      hat(t,m*.28,.032);
+    }
+  },
 };
 
 /* ════════════════════════════════════════════
