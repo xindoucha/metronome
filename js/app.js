@@ -429,7 +429,8 @@ setBPM(120);
 fillSlider(document.getElementById('volSlider'));
 updateCfgDots();
 renderIndicator();
-renderDrumScores();
+if(typeof initPractice==='function') initPractice();
+else if(typeof renderDrumScores==='function') renderDrumScores();
 
 /* ════════════════════════════════════════════
    Events
@@ -472,13 +473,13 @@ document.getElementById('subRow').addEventListener('click',e=>{
 });
 
 // Practice exercises
-document.querySelectorAll('.use-exercise').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    setBPM(+btn.dataset.bpm);
-    subdiv=btn.dataset.subdiv;
-    document.querySelectorAll('#subRow .sub-btn').forEach(x=>x.classList.toggle('sel',x.dataset.d===subdiv));
-    setAppTab('metronome');
-  });
+document.getElementById('panelPractice').addEventListener('click',e=>{
+  const btn=e.target.closest('.use-exercise');
+  if(!btn)return;
+  setBPM(+btn.dataset.bpm);
+  subdiv=btn.dataset.subdiv;
+  document.querySelectorAll('#subRow .sub-btn').forEach(x=>x.classList.toggle('sel',x.dataset.d===subdiv));
+  setAppTab('metronome');
 });
 
 // Config buttons → open sheets

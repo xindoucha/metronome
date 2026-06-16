@@ -264,6 +264,68 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   background: var(--card2); border: 1px solid var(--border);
   color: var(--text2); font-size: 12px; font-weight: 600;
 }
+.practice-selectors {
+  display: grid; gap: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: var(--card2);
+}
+.practice-select-group { display: grid; gap: 7px; }
+.practice-select-label {
+  color: var(--text3);
+  font-size: 10px; font-weight: 800; letter-spacing: 1.2px;
+}
+.practice-toggle {
+  display: grid; grid-template-columns: repeat(2,1fr); gap: 6px;
+}
+.practice-type,
+.practice-option {
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+  touch-action: manipulation;
+}
+.practice-type {
+  height: 36px; border-radius: 10px;
+  font-size: 13px; font-weight: 800;
+}
+.practice-type:hover:not(.active),
+.practice-option:hover:not(.active) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.practice-type.active,
+.practice-option.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.practice-options {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 7px;
+}
+.practice-option {
+  min-height: 46px; padding: 7px 6px; border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  font-size: 11px; font-weight: 800; line-height: 1.2;
+  text-align: center;
+}
+.practice-option-step {
+  color: var(--text3);
+  font-size: 10px; font-weight: 900;
+}
+.practice-option.active .practice-option-step { color: var(--accent); }
+.practice-detail { min-height: 260px; }
+.practice-empty {
+  padding: 28px 12px;
+  color: var(--text2);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+}
 .exercise-card {
   border: 1.5px solid var(--border);
   border-radius: 12px;
@@ -518,5 +580,6 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   .al-btn { font-size: 10px; }
   .practice-panel { padding: 14px 12px 18px; }
   .practice-head h1 { font-size: 18px; }
-  .practice-sequence { grid-template-columns: 1fr; }
+  .practice-options { grid-template-columns: repeat(2,1fr); }
+  .practice-option { min-height: 44px; }
 }

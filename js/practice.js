@@ -1,6 +1,103 @@
 /* ════════════════════════════════════════════
    VexFlow drum practice notation
 ════════════════════════════════════════════ */
+const PRACTICE_EXERCISES={
+  pad:[
+    {
+      id:'pad-single-eighth',
+      step:'01',
+      title:'哑鼓垫：八分单击',
+      desc:'目标：左右手交替 R L，声音高度和间隔尽量一致。',
+      range:'建议 60 → 90 BPM',
+      bpm:70,
+      subdiv:'2',
+      aria:'哑鼓垫八分单击谱'
+    },
+    {
+      id:'pad-single-sixteenth',
+      step:'02',
+      title:'哑鼓垫：十六分单击',
+      desc:'目标：R L R L 连续交替，手腕小动作，不靠手臂硬砸。',
+      range:'建议 50 → 75 BPM',
+      bpm:60,
+      subdiv:'4',
+      aria:'哑鼓垫十六分单击谱'
+    },
+    {
+      id:'pad-double-sixteenth',
+      step:'03',
+      title:'哑鼓垫：双击基础',
+      desc:'目标：R R L L 成组练习，第二下不要塌掉，保持回弹。',
+      range:'建议 45 → 70 BPM',
+      bpm:56,
+      subdiv:'4',
+      aria:'哑鼓垫十六分双击谱'
+    }
+  ],
+  kit:[
+    {
+      id:'quarter',
+      step:'04',
+      title:'四分音符稳拍',
+      desc:'目标：建立 1 2 3 4 的落点，底鼓和军鼓先稳住。',
+      range:'建议 70 → 90 BPM',
+      bpm:70,
+      subdiv:'1',
+      aria:'四分音符鼓谱'
+    },
+    {
+      id:'eighth',
+      step:'05',
+      title:'八分音符律动',
+      desc:'目标：右手打满 1 & 2 &，保持二四拍军鼓清晰。',
+      range:'建议 70 → 100 BPM',
+      bpm:80,
+      subdiv:'2',
+      aria:'八分音符鼓谱'
+    },
+    {
+      id:'sixteenth',
+      step:'06',
+      title:'十六分音符控制',
+      desc:'目标：右手连续十六分，脚鼓只放在明确位置，别抢拍。',
+      range:'建议 55 → 80 BPM',
+      bpm:60,
+      subdiv:'4',
+      aria:'十六分音符鼓谱'
+    },
+    {
+      id:'quarter-eighth',
+      step:'07',
+      title:'四分 → 八分切换',
+      desc:'目标：前两拍四分，后两拍八分，切换时速度感不变。',
+      range:'建议 65 → 90 BPM',
+      bpm:72,
+      subdiv:'2',
+      aria:'四分到八分切换鼓谱'
+    },
+    {
+      id:'eighth-sixteenth',
+      step:'08',
+      title:'八分 → 十六分切换',
+      desc:'目标：一小节内完成密度升级，手腕保持小动作。',
+      range:'建议 55 → 75 BPM',
+      bpm:64,
+      subdiv:'4',
+      aria:'八分到十六分切换鼓谱'
+    },
+    {
+      id:'mixed',
+      step:'09',
+      title:'综合循环',
+      desc:'目标：四分、八分、十六分交替出现，作为初学者日常热身。',
+      range:'建议 60 → 85 BPM',
+      bpm:68,
+      subdiv:'4',
+      aria:'综合循环鼓谱'
+    }
+  ]
+};
+
 const SCORE_PATTERNS={
   'pad-single-eighth': {
     title:'哑鼓垫八分单击',
@@ -79,9 +176,12 @@ const DRUM_KEYS={
   bd:'f/4'
 };
 
-function renderDrumScores(){
+let practiceType='pad';
+let practiceExerciseId=PRACTICE_EXERCISES.pad[0].id;
+
+function renderDrumScores(root=document){
   const VF=getVexFlow();
-  document.querySelectorAll('[data-score]').forEach(box=>{
+  root.querySelectorAll('[data-score]').forEach(box=>{
     const pattern=SCORE_PATTERNS[box.dataset.score];
     if(!pattern)return;
     box.innerHTML='';
@@ -91,6 +191,81 @@ function renderDrumScores(){
     }
     renderVexFlowScore(box,pattern,VF);
   });
+}
+
+function initPractice(){
+  const typeTabs=document.getElementById('practiceTypeTabs');
+  const options=document.getElementById('practiceOptions');
+  const detail=document.getElementById('practiceDetail');
+  if(!typeTabs||!options||!detail)return;
+
+  typeTabs.addEventListener('click',e=>{
+    const btn=e.target.closest('.practice-type');
+    if(!btn||btn.dataset.type===practiceType)return;
+    practiceType=btn.dataset.type;
+    practiceExerciseId=PRACTICE_EXERCISES[practiceType][0].id;
+    updatePracticeTypeTabs();
+    renderPracticeOptions();
+    renderPracticeDetail();
+  });
+
+  options.addEventListener('click',e=>{
+    const btn=e.target.closest('.practice-option');
+    if(!btn||btn.dataset.exercise===practiceExerciseId)return;
+    practiceExerciseId=btn.dataset.exercise;
+    renderPracticeOptions();
+    renderPracticeDetail();
+  });
+
+  updatePracticeTypeTabs();
+  renderPracticeOptions();
+  renderPracticeDetail();
+}
+
+function updatePracticeTypeTabs(){
+  document.querySelectorAll('.practice-type').forEach(btn=>{
+    const active=btn.dataset.type===practiceType;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-selected',String(active));
+  });
+}
+
+function renderPracticeOptions(){
+  const options=document.getElementById('practiceOptions');
+  if(!options)return;
+  options.innerHTML=PRACTICE_EXERCISES[practiceType].map(ex=>`
+    <button class="practice-option${ex.id===practiceExerciseId?' active':''}" data-exercise="${ex.id}">
+      <span class="practice-option-step">${ex.step}</span>
+      <span>${ex.title.replace(/^哑鼓垫：/,'')}</span>
+    </button>
+  `).join('');
+}
+
+function renderPracticeDetail(){
+  const detail=document.getElementById('practiceDetail');
+  if(!detail)return;
+  const exercise=PRACTICE_EXERCISES[practiceType].find(ex=>ex.id===practiceExerciseId);
+  if(!exercise){
+    detail.innerHTML='<div class="practice-empty">请选择练习内容</div>';
+    return;
+  }
+  detail.innerHTML=`
+    <article class="exercise-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">${exercise.step}</span>
+        <div>
+          <h2>${exercise.title}</h2>
+          <p>${exercise.desc}</p>
+        </div>
+      </div>
+      <div class="exercise-actions">
+        <span>${exercise.range}</span>
+        <button class="use-exercise" data-bpm="${exercise.bpm}" data-subdiv="${exercise.subdiv}">套用</button>
+      </div>
+      <div class="drum-score${practiceType==='pad'?' pad-score':''}" data-score="${exercise.id}" aria-label="${exercise.aria}"></div>
+    </article>
+  `;
+  renderDrumScores(detail);
 }
 
 function getVexFlow(){

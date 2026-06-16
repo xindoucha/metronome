@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>节拍器 Metronome</title>
-  <link rel="stylesheet" href="css/style.css?v=1.4.0">
+  <link rel="stylesheet" href="css/style.css?v=1.5.0">
 </head>
 <body>
 
@@ -163,144 +163,26 @@
       <span>右手保持稳定，军鼓和底鼓尽量放松</span>
     </div>
 
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">01</span>
-        <div>
-          <h2>哑鼓垫：八分单击</h2>
-          <p>目标：左右手交替 R L，声音高度和间隔尽量一致。</p>
+    <div class="practice-selectors">
+      <div class="practice-select-group">
+        <span class="practice-select-label">练习器材</span>
+        <div class="practice-toggle" id="practiceTypeTabs" role="tablist" aria-label="练习器材">
+          <button class="practice-type active" data-type="pad" role="tab" aria-selected="true">哑鼓垫</button>
+          <button class="practice-type" data-type="kit" role="tab" aria-selected="false">架子鼓</button>
         </div>
       </div>
-      <div class="exercise-actions">
-        <span>建议 60 → 90 BPM</span>
-        <button class="use-exercise" data-bpm="70" data-subdiv="2">套用</button>
-      </div>
-      <div class="drum-score pad-score" data-score="pad-single-eighth" aria-label="哑鼓垫八分单击谱"></div>
-    </article>
 
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">02</span>
-        <div>
-          <h2>哑鼓垫：十六分单击</h2>
-          <p>目标：R L R L 连续交替，手腕小动作，不靠手臂硬砸。</p>
-        </div>
+      <div class="practice-select-group">
+        <span class="practice-select-label">练习内容</span>
+        <div class="practice-options" id="practiceOptions" aria-label="练习内容"></div>
       </div>
-      <div class="exercise-actions">
-        <span>建议 50 → 75 BPM</span>
-        <button class="use-exercise" data-bpm="60" data-subdiv="4">套用</button>
-      </div>
-      <div class="drum-score pad-score" data-score="pad-single-sixteenth" aria-label="哑鼓垫十六分单击谱"></div>
-    </article>
+    </div>
 
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">03</span>
-        <div>
-          <h2>哑鼓垫：双击基础</h2>
-          <p>目标：R R L L 成组练习，第二下不要塌掉，保持回弹。</p>
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span>建议 45 → 70 BPM</span>
-        <button class="use-exercise" data-bpm="56" data-subdiv="4">套用</button>
-      </div>
-      <div class="drum-score pad-score" data-score="pad-double-sixteenth" aria-label="哑鼓垫十六分双击谱"></div>
-    </article>
-
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">04</span>
-        <div>
-          <h2>四分音符稳拍</h2>
-          <p>目标：建立 1 2 3 4 的落点，底鼓和军鼓先稳住。</p>
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span>建议 70 → 90 BPM</span>
-        <button class="use-exercise" data-bpm="70" data-subdiv="1">套用</button>
-      </div>
-      <div class="drum-score" data-score="quarter" aria-label="四分音符鼓谱"></div>
-    </article>
-
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">05</span>
-        <div>
-          <h2>八分音符律动</h2>
-          <p>目标：右手打满 1 & 2 &，保持二四拍军鼓清晰。</p>
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span>建议 70 → 100 BPM</span>
-        <button class="use-exercise" data-bpm="80" data-subdiv="2">套用</button>
-      </div>
-      <div class="drum-score" data-score="eighth" aria-label="八分音符鼓谱"></div>
-    </article>
-
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">06</span>
-        <div>
-          <h2>十六分音符控制</h2>
-          <p>目标：右手连续十六分，脚鼓只放在明确位置，别抢拍。</p>
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span>建议 55 → 80 BPM</span>
-        <button class="use-exercise" data-bpm="60" data-subdiv="4">套用</button>
-      </div>
-      <div class="drum-score" data-score="sixteenth" aria-label="十六分音符鼓谱"></div>
-    </article>
-
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">07</span>
-        <div>
-          <h2>四分 → 八分切换</h2>
-          <p>目标：前两拍四分，后两拍八分，切换时速度感不变。</p>
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span>建议 65 → 90 BPM</span>
-        <button class="use-exercise" data-bpm="72" data-subdiv="2">套用</button>
-      </div>
-      <div class="drum-score" data-score="quarter-eighth" aria-label="四分到八分切换鼓谱"></div>
-    </article>
-
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">08</span>
-        <div>
-          <h2>八分 → 十六分切换</h2>
-          <p>目标：一小节内完成密度升级，手腕保持小动作。</p>
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span>建议 55 → 75 BPM</span>
-        <button class="use-exercise" data-bpm="64" data-subdiv="4">套用</button>
-      </div>
-      <div class="drum-score" data-score="eighth-sixteenth" aria-label="八分到十六分切换鼓谱"></div>
-    </article>
-
-    <article class="exercise-card">
-      <div class="exercise-meta">
-        <span class="exercise-step">09</span>
-        <div>
-          <h2>综合循环</h2>
-          <p>目标：四分、八分、十六分交替出现，作为初学者日常热身。</p>
-        </div>
-      </div>
-      <div class="exercise-actions">
-        <span>建议 60 → 85 BPM</span>
-        <button class="use-exercise" data-bpm="68" data-subdiv="4">套用</button>
-      </div>
-      <div class="drum-score" data-score="mixed" aria-label="综合循环鼓谱"></div>
-    </article>
+    <div class="practice-detail" id="practiceDetail"></div>
   </section>
 
   <!-- Footer -->
-  <div class="card-footer">v1.4.0</div>
+  <div class="card-footer">v1.5.0</div>
 
 </div><!-- /card -->
 
@@ -429,7 +311,7 @@
 </div>
 
 <script src="vendor/vexflow/vexflow.js?v=4.2.5" defer></script>
-<script src="js/practice.js?v=1.4.0" defer></script>
-<script src="js/app.js?v=1.4.0" defer></script>
+<script src="js/practice.js?v=1.5.0" defer></script>
+<script src="js/app.js?v=1.5.0" defer></script>
 </body>
 </html>
