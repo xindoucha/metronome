@@ -560,13 +560,17 @@ function getVexFlow(){
 }
 
 function renderVexFlowScore(box,pattern,VF){
-  const width=440, height=pattern.sticking?162:142;
+  const positions=eventPositions(pattern);
+  const dense=positions.length>=16;
+  const width=dense?620:480, height=pattern.sticking?162:142;
+  const staveWidth=dense?570:430;
+  const formatWidth=dense?480:340;
   const renderer=new VF.Renderer(box,VF.Renderer.Backends.SVG);
   renderer.resize(width,height);
   const context=renderer.getContext();
   context.setFont('Arial',10,'');
 
-  const stave=new VF.Stave(18,30,400);
+  const stave=new VF.Stave(18,30,staveWidth);
   stave.addClef('percussion').addTimeSignature('4/4');
   stave.setContext(context).draw();
 
@@ -574,11 +578,11 @@ function renderVexFlowScore(box,pattern,VF){
   const voice=new VF.Voice({num_beats:4,beat_value:4});
   voice.addTickables(notes);
 
-  new VF.Formatter().joinVoices([voice]).format([voice],310);
+  new VF.Formatter().joinVoices([voice]).format([voice],formatWidth);
   voice.draw(context,stave);
 
   buildBeams(pattern,positionToNote,VF).forEach(beam=>beam.setContext(context).draw());
-  addMeasureLabels(box,pattern);
+  addMeasureLabels(box,pattern,positionToNote);
   polishPercussionHeads(box);
 }
 
@@ -633,7 +637,13 @@ function buildBeams(pattern,positionToNote,VF){
   }).filter(Boolean);
 }
 
-function addMeasureLabels(box,pattern){
+function noteXAt(positionToNote,pos){
+  const note=positionToNote.get(Number(pos));
+  if(note&&typeof note.getAbsoluteX==='function')return note.getAbsoluteX();
+  return 108+Number(pos)*19;
+}
+
+function addMeasureLabels(box,pattern,positionToNote){
   const svg=box.querySelector('svg');
   if(!svg)return;
   const ns='http://www.w3.org/2000/svg';
@@ -641,7 +651,7 @@ function addMeasureLabels(box,pattern){
     Object.entries(pattern.sticking).forEach(([pos,label])=>{
       const text=document.createElementNS(ns,'text');
       text.setAttribute('class',`vf-sticking ${label==='R'?'right':'left'}`);
-      text.setAttribute('x',String(108+Number(pos)*19));
+      text.setAttribute('x',String(noteXAt(positionToNote,pos)));
       text.setAttribute('y','130');
       text.setAttribute('text-anchor','middle');
       text.textContent=label;
@@ -651,7 +661,7 @@ function addMeasureLabels(box,pattern){
   (pattern.accents||[]).forEach(pos=>{
     const text=document.createElementNS(ns,'text');
     text.setAttribute('class','vf-accent-mark');
-    text.setAttribute('x',String(108+Number(pos)*19));
+    text.setAttribute('x',String(noteXAt(positionToNote,pos)));
     text.setAttribute('y','47');
     text.setAttribute('text-anchor','middle');
     text.textContent='>';
@@ -660,7 +670,7 @@ function addMeasureLabels(box,pattern){
   [1,2,3,4].forEach((beat,i)=>{
     const text=document.createElementNS(ns,'text');
     text.setAttribute('class','vf-beat-label');
-    text.setAttribute('x',String(108+i*76));
+    text.setAttribute('x',String(noteXAt(positionToNote,i*4)));
     text.setAttribute('y',pattern.sticking?'150':'128');
     text.setAttribute('text-anchor','middle');
     text.textContent=beat;
