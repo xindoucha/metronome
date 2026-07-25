@@ -171,17 +171,22 @@ const PRACTICE_EXERCISES={
 const PRACTICE_TYPE_LABELS={
   pad:'哑鼓垫',
   kit:'架子鼓',
-  plan:'每周任务'
+  plan:'15天计划'
 };
 
 const WEEKLY_PLAN=[
   {
     id:'day-1',
     day:'Day 1',
+    stage:'阶段一：手型与落点',
     title:'认识落点：八分单击',
     goal:'先把 R L 交替和 1 2 3 4 的落点对齐。',
     minutes:'15 分钟',
     standard:'70 BPM 连续 4 小节不抢拍，再加到 75 BPM。',
+    cues:[
+      {mark:'R L', text:'左右手轮流，声音高度尽量一样'},
+      {mark:'1 2 3 4', text:'每个数字都要和节拍器主拍重合'}
+    ],
     tasks:[
       {exercise:'pad-single-eighth', label:'八分单击', bpm:65, subdiv:'2', time:'8 分钟'},
       {exercise:'quarter', label:'四分稳拍', bpm:70, subdiv:'1', time:'7 分钟'}
@@ -190,10 +195,15 @@ const WEEKLY_PLAN=[
   {
     id:'day-2',
     day:'Day 2',
+    stage:'阶段一：手型与落点',
     title:'十六分手腕控制',
     goal:'动作变小，不靠手臂硬砸，先追求均匀。',
     minutes:'18 分钟',
     standard:'60 BPM 连续 4 小节声音均匀，再练 2 分钟耐力。',
+    cues:[
+      {mark:'R L R L', text:'四下为一组，手腕小幅度连续运动'},
+      {mark:'弱而稳', text:'先小声打准，别一上来追求大音量'}
+    ],
     tasks:[
       {exercise:'pad-single-sixteenth', label:'十六分单击', bpm:55, subdiv:'4', time:'10 分钟'},
       {exercise:'pad-endurance', label:'稳定耐力', bpm:55, subdiv:'4', time:'8 分钟'}
@@ -202,10 +212,15 @@ const WEEKLY_PLAN=[
   {
     id:'day-3',
     day:'Day 3',
+    stage:'阶段一：手型与落点',
     title:'双击入门',
     goal:'让第二下靠回弹出来，不要比第一下明显变小。',
     minutes:'18 分钟',
     standard:'56 BPM 每组 R R L L 清楚，连续 4 小节不乱手。',
+    cues:[
+      {mark:'R R L L', text:'第二下靠鼓棒回弹，手指轻轻收住'},
+      {mark:'慢速', text:'宁可慢一点，也不要把双击打成拖拍'}
+    ],
     tasks:[
       {exercise:'pad-double-sixteenth', label:'双击基础', bpm:50, subdiv:'4', time:'10 分钟'},
       {exercise:'pad-single-double-mix', label:'单双混合', bpm:52, subdiv:'4', time:'8 分钟'}
@@ -214,10 +229,15 @@ const WEEKLY_PLAN=[
   {
     id:'day-4',
     day:'Day 4',
+    stage:'阶段一：手型与落点',
     title:'重音和轻音',
     goal:'打出明显强弱差异，轻音真的轻，重音不砸。',
     minutes:'20 分钟',
     standard:'54 BPM 重音清楚，轻音不跟着变大。',
+    cues:[
+      {mark:'> r l r', text:'重音高一点，轻音贴近鼓面'},
+      {mark:'强弱差', text:'强音不是用力砸，而是动作高度更明确'}
+    ],
     tasks:[
       {exercise:'pad-accent-downbeat', label:'拍头重音', bpm:54, subdiv:'4', time:'7 分钟'},
       {exercise:'pad-accent-offbeat', label:'后移重音', bpm:50, subdiv:'4', time:'7 分钟'},
@@ -227,10 +247,15 @@ const WEEKLY_PLAN=[
   {
     id:'day-5',
     day:'Day 5',
+    stage:'阶段一：手型与落点',
     title:'Paradiddle 组合',
     goal:'熟悉 R L R R / L R L L，为以后加花打基础。',
     minutes:'18 分钟',
     standard:'58 BPM 连续 4 小节不乱手，再加 5 BPM。',
+    cues:[
+      {mark:'RLRR LRLL', text:'把每四下当成一个单词来记'},
+      {mark:'不加速', text:'双击位置最容易突然变快，专门盯住它'}
+    ],
     tasks:[
       {exercise:'pad-paradiddle', label:'Paradiddle', bpm:52, subdiv:'4', time:'12 分钟'},
       {exercise:'eighth', label:'八分律动', bpm:76, subdiv:'2', time:'6 分钟'}
@@ -239,10 +264,15 @@ const WEEKLY_PLAN=[
   {
     id:'day-6',
     day:'Day 6',
+    stage:'阶段二：上鼓基础',
     title:'上鼓：基础律动',
     goal:'把手上的稳定性带到整套鼓，脚鼓不要抢。',
     minutes:'20 分钟',
     standard:'80 BPM 八分律动连续 8 小节稳定。',
+    cues:[
+      {mark:'HH 8分', text:'右手像时钟一样稳定，不被脚鼓带跑'},
+      {mark:'SD 2/4', text:'军鼓固定在第 2、4 拍，声音清楚'}
+    ],
     tasks:[
       {exercise:'quarter', label:'四分稳拍', bpm:72, subdiv:'1', time:'6 分钟'},
       {exercise:'eighth', label:'八分律动', bpm:76, subdiv:'2', time:'8 分钟'},
@@ -252,14 +282,159 @@ const WEEKLY_PLAN=[
   {
     id:'day-7',
     day:'Day 7',
+    stage:'阶段二：上鼓基础',
     title:'复盘日：慢速到中速',
     goal:'不要冲速度，把一周内容串起来，记录最稳的 BPM。',
     minutes:'25 分钟',
     standard:'选择 3 条练习，各连续 4 小节无明显错误。',
+    cues:[
+      {mark:'记录 BPM', text:'写下今天最稳的速度，不用和别人比'},
+      {mark:'4小节', text:'能稳定循环 4 小节，再考虑提速'}
+    ],
     tasks:[
       {exercise:'pad-single-sixteenth', label:'十六分单击', bpm:60, subdiv:'4', time:'8 分钟'},
       {exercise:'pad-paradiddle', label:'Paradiddle', bpm:56, subdiv:'4', time:'8 分钟'},
       {exercise:'mixed', label:'综合循环', bpm:66, subdiv:'4', time:'9 分钟'}
+    ]
+  },
+  {
+    id:'day-8',
+    day:'Day 8',
+    stage:'阶段二：上鼓基础',
+    title:'脚手分离：底鼓落点',
+    goal:'右手保持八分，底鼓只在指定位置出现。',
+    minutes:'22 分钟',
+    standard:'76 BPM 连续 8 小节，底鼓不提前。',
+    cues:[
+      {mark:'BD = 脚', text:'脚鼓轻踩准，不要用力跺'},
+      {mark:'手不变', text:'脚鼓加入后，右手八分不能变形'}
+    ],
+    tasks:[
+      {exercise:'eighth', label:'八分律动', bpm:72, subdiv:'2', time:'10 分钟'},
+      {exercise:'gulou-basic', label:'鼓楼入门伴奏型', bpm:66, subdiv:'2', time:'12 分钟'}
+    ]
+  },
+  {
+    id:'day-9',
+    day:'Day 9',
+    stage:'阶段二：上鼓基础',
+    title:'十六分回到哑鼓垫',
+    goal:'用一天把手腕重新校准，避免上鼓之后动作变大。',
+    minutes:'20 分钟',
+    standard:'60 BPM 十六分稳定 2 分钟，手腕不酸僵。',
+    cues:[
+      {mark:'小动作', text:'鼓棒高度控制在舒服范围，不要抬太高'},
+      {mark:'均匀', text:'听每一下间隔，不只看手序'}
+    ],
+    tasks:[
+      {exercise:'pad-single-sixteenth', label:'十六分单击', bpm:58, subdiv:'4', time:'8 分钟'},
+      {exercise:'pad-accent-downbeat', label:'拍头重音', bpm:56, subdiv:'4', time:'6 分钟'},
+      {exercise:'pad-endurance', label:'稳定耐力', bpm:58, subdiv:'4', time:'6 分钟'}
+    ]
+  },
+  {
+    id:'day-10',
+    day:'Day 10',
+    stage:'阶段二：上鼓基础',
+    title:'密度切换：四分到八分',
+    goal:'练习从稀到密，速度感不变。',
+    minutes:'22 分钟',
+    standard:'72 BPM 切换 8 小节，进入八分时不突然变快。',
+    cues:[
+      {mark:'稀 -> 密', text:'变的是音符数量，不是 BPM'},
+      {mark:'先唱再打', text:'心里先数出后两拍八分，再上手'}
+    ],
+    tasks:[
+      {exercise:'quarter-eighth', label:'四分到八分切换', bpm:68, subdiv:'2', time:'12 分钟'},
+      {exercise:'eighth', label:'八分律动', bpm:78, subdiv:'2', time:'10 分钟'}
+    ]
+  },
+  {
+    id:'day-11',
+    day:'Day 11',
+    stage:'阶段三：入门整合',
+    title:'密度升级：八分到十六分',
+    goal:'开始感受更密的右手，不牺牲军鼓和底鼓落点。',
+    minutes:'24 分钟',
+    standard:'64 BPM 连续 4 小节，十六分段落清楚不糊。',
+    cues:[
+      {mark:'8 -> 16', text:'右手变密后，二四拍军鼓仍要明显'},
+      {mark:'放松', text:'越密越要放松，否则很快失控'}
+    ],
+    tasks:[
+      {exercise:'eighth-sixteenth', label:'八分到十六分切换', bpm:60, subdiv:'4', time:'12 分钟'},
+      {exercise:'sixteenth', label:'十六分控制', bpm:58, subdiv:'4', time:'12 分钟'}
+    ]
+  },
+  {
+    id:'day-12',
+    day:'Day 12',
+    stage:'阶段三：入门整合',
+    title:'加花准备：Paradiddle 上速度',
+    goal:'让 Paradiddle 更顺，为简单过门做准备。',
+    minutes:'22 分钟',
+    standard:'62 BPM Paradiddle 连续 4 小节不乱手。',
+    cues:[
+      {mark:'RLRR', text:'右手开头的四下是一组'},
+      {mark:'LRLL', text:'左手开头的四下是一组，别只练右手舒服的方向'}
+    ],
+    tasks:[
+      {exercise:'pad-paradiddle', label:'Paradiddle', bpm:58, subdiv:'4', time:'12 分钟'},
+      {exercise:'pad-single-double-mix', label:'单双混合', bpm:58, subdiv:'4', time:'10 分钟'}
+    ]
+  },
+  {
+    id:'day-13',
+    day:'Day 13',
+    stage:'阶段三：入门整合',
+    title:'跟歌练习：《鼓楼》入门型',
+    goal:'用简单伴奏型跟着歌曲感觉练稳定，而不是追求复杂。',
+    minutes:'25 分钟',
+    standard:'68 BPM 先单独打稳，再尝试跟歌一段不乱。',
+    cues:[
+      {mark:'HH steady', text:'踩镲是你的轨道，先让它稳定'},
+      {mark:'少即是多', text:'底鼓不要加太多，先稳住律动'}
+    ],
+    tasks:[
+      {exercise:'gulou-basic', label:'鼓楼入门伴奏型', bpm:66, subdiv:'2', time:'15 分钟'},
+      {exercise:'eighth', label:'八分律动', bpm:78, subdiv:'2', time:'10 分钟'}
+    ]
+  },
+  {
+    id:'day-14',
+    day:'Day 14',
+    stage:'阶段三：入门整合',
+    title:'综合循环：稳定优先',
+    goal:'把四分、八分、十六分和基础律动串起来。',
+    minutes:'28 分钟',
+    standard:'综合循环 66 BPM 连续 8 小节，明显错误不超过 1 次。',
+    cues:[
+      {mark:'循环', text:'错了不要停，回到下一小节继续'},
+      {mark:'慢检查', text:'如果错超过 1 次，降 5 BPM 重来'}
+    ],
+    tasks:[
+      {exercise:'mixed', label:'综合循环', bpm:66, subdiv:'4', time:'12 分钟'},
+      {exercise:'sixteenth', label:'十六分控制', bpm:60, subdiv:'4', time:'8 分钟'},
+      {exercise:'gulou-basic', label:'鼓楼入门伴奏型', bpm:70, subdiv:'2', time:'8 分钟'}
+    ]
+  },
+  {
+    id:'day-15',
+    day:'Day 15',
+    stage:'阶段三：入门整合',
+    title:'入门水平自测',
+    goal:'检查你是否能稳定完成入门节奏，不追求花哨。',
+    minutes:'30 分钟',
+    standard:'任选 4 条练习，各连续 8 小节；能稳定完成就进入下一阶段。',
+    cues:[
+      {mark:'自测', text:'录音或录像 1 分钟，听是否抢拍拖拍'},
+      {mark:'过关', text:'稳定比速度重要，达标后再系统学过门'}
+    ],
+    tasks:[
+      {exercise:'pad-single-sixteenth', label:'十六分单击', bpm:62, subdiv:'4', time:'6 分钟'},
+      {exercise:'pad-paradiddle', label:'Paradiddle', bpm:60, subdiv:'4', time:'6 分钟'},
+      {exercise:'eighth', label:'八分律动', bpm:82, subdiv:'2', time:'8 分钟'},
+      {exercise:'mixed', label:'综合循环', bpm:68, subdiv:'4', time:'10 分钟'}
     ]
   }
 ];
@@ -531,6 +706,7 @@ function renderPlanDetail(detail){
       <div class="exercise-meta">
         <span class="exercise-step">${plan.day.replace('Day ','D')}</span>
         <div>
+          <span class="plan-stage">${plan.stage}</span>
           <h2>${plan.title}</h2>
           <p>${plan.goal}</p>
         </div>
@@ -538,6 +714,14 @@ function renderPlanDetail(detail){
       <div class="plan-summary">
         <div><span>练习时长</span><strong>${plan.minutes}</strong></div>
         <div><span>达标标准</span><strong>${plan.standard}</strong></div>
+      </div>
+      <div class="plan-cues">
+        ${plan.cues.map(cue=>`
+          <div class="plan-cue">
+            <span>${cue.mark}</span>
+            <p>${cue.text}</p>
+          </div>
+        `).join('')}
       </div>
       <div class="plan-task-list">
         ${plan.tasks.map(task=>`

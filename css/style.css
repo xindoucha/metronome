@@ -337,6 +337,18 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   font-weight: 700;
 }
 .plan-card { margin-bottom: 0; }
+.plan-stage {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 5px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
 .plan-summary {
   display: grid; gap: 8px;
   margin-bottom: 12px;
@@ -358,6 +370,40 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   color: var(--text);
   font-size: 12px;
   line-height: 1.45;
+}
+.plan-cues {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.plan-cue {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 11px;
+  background: color-mix(in srgb,var(--accent-bg) 62%,var(--card));
+  border: 1px solid color-mix(in srgb,var(--accent) 35%,var(--border));
+}
+.plan-cue span {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+.plan-cue p {
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
 }
 .plan-task-list {
   display: grid; gap: 8px;
@@ -665,6 +711,12 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   .practice-detail { min-width: 0; }
   .exercise-card { margin-bottom: 0; }
 }
+@media (max-width: 520px) {
+  .plan-cues { grid-template-columns: 1fr; }
+  .plan-cue { grid-template-columns: 54px 1fr; }
+  .plan-task { align-items: stretch; flex-direction: column; }
+  .plan-task .use-exercise { width: 100%; }
+}
 @media (max-width: 380px) {
   .bpm-num { font-size: 52px; min-width: 145px; }
   .play-btn { height: 64px; font-size: 17px; }
@@ -675,6 +727,5 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   .practice-toggle { grid-template-columns: 1fr; }
   .practice-options { grid-template-columns: repeat(2,1fr); }
   .practice-option { min-height: 44px; }
-  .plan-task { align-items: stretch; flex-direction: column; }
-  .plan-task .use-exercise { width: 100%; }
+  .plan-cue { grid-template-columns: 52px 1fr; }
 }
