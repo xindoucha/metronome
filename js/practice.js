@@ -32,12 +32,72 @@ const PRACTICE_EXERCISES={
       bpm:56,
       subdiv:'4',
       aria:'哑鼓垫十六分双击谱'
+    },
+    {
+      id:'pad-single-double-mix',
+      step:'04',
+      title:'哑鼓垫：单双混合',
+      desc:'目标：R L R L 接 R R L L，练习从单击过渡到双击。',
+      range:'建议 45 → 70 BPM',
+      bpm:56,
+      subdiv:'4',
+      aria:'哑鼓垫单双混合谱'
+    },
+    {
+      id:'pad-paradiddle',
+      step:'05',
+      title:'哑鼓垫：Paradiddle',
+      desc:'目标：R L R R / L R L L，保持每组最后一个双击不赶拍。',
+      range:'建议 45 → 75 BPM',
+      bpm:58,
+      subdiv:'4',
+      aria:'哑鼓垫 paradiddle 谱'
+    },
+    {
+      id:'pad-accent-downbeat',
+      step:'06',
+      title:'哑鼓垫：重音在拍头',
+      desc:'目标：每组十六分第 1 下加重，其他三下保持轻而稳。',
+      range:'建议 50 → 80 BPM',
+      bpm:60,
+      subdiv:'4',
+      aria:'哑鼓垫拍头重音谱'
+    },
+    {
+      id:'pad-accent-offbeat',
+      step:'07',
+      title:'哑鼓垫：重音后移',
+      desc:'目标：重音移动到每组第 2 下，练习手腕控制和动态差异。',
+      range:'建议 45 → 70 BPM',
+      bpm:54,
+      subdiv:'4',
+      aria:'哑鼓垫后移重音谱'
+    },
+    {
+      id:'pad-accent-upbeat',
+      step:'08',
+      title:'哑鼓垫：反拍重音',
+      desc:'目标：重音放在每组第 3 下，保持轻音不要变大。',
+      range:'建议 45 → 70 BPM',
+      bpm:54,
+      subdiv:'4',
+      aria:'哑鼓垫反拍重音谱'
+    },
+    {
+      id:'pad-endurance',
+      step:'09',
+      title:'哑鼓垫：稳定耐力',
+      desc:'目标：连续十六分 2 分钟不僵硬，声音、间隔、动作幅度保持一致。',
+      range:'建议 50 → 80 BPM',
+      bpm:60,
+      subdiv:'4',
+      aria:'哑鼓垫稳定耐力谱'
     }
   ],
   kit:[
     {
       id:'quarter',
-      step:'04',
+      step:'10',
       title:'四分音符稳拍',
       desc:'目标：建立 1 2 3 4 的落点，底鼓和军鼓先稳住。',
       range:'建议 70 → 90 BPM',
@@ -47,7 +107,7 @@ const PRACTICE_EXERCISES={
     },
     {
       id:'eighth',
-      step:'05',
+      step:'11',
       title:'八分音符律动',
       desc:'目标：右手打满 1 & 2 &，保持二四拍军鼓清晰。',
       range:'建议 70 → 100 BPM',
@@ -57,7 +117,7 @@ const PRACTICE_EXERCISES={
     },
     {
       id:'sixteenth',
-      step:'06',
+      step:'12',
       title:'十六分音符控制',
       desc:'目标：右手连续十六分，脚鼓只放在明确位置，别抢拍。',
       range:'建议 55 → 80 BPM',
@@ -67,7 +127,7 @@ const PRACTICE_EXERCISES={
     },
     {
       id:'quarter-eighth',
-      step:'07',
+      step:'13',
       title:'四分 → 八分切换',
       desc:'目标：前两拍四分，后两拍八分，切换时速度感不变。',
       range:'建议 65 → 90 BPM',
@@ -77,7 +137,7 @@ const PRACTICE_EXERCISES={
     },
     {
       id:'eighth-sixteenth',
-      step:'08',
+      step:'14',
       title:'八分 → 十六分切换',
       desc:'目标：一小节内完成密度升级，手腕保持小动作。',
       range:'建议 55 → 75 BPM',
@@ -87,16 +147,122 @@ const PRACTICE_EXERCISES={
     },
     {
       id:'mixed',
-      step:'09',
+      step:'15',
       title:'综合循环',
       desc:'目标：四分、八分、十六分交替出现，作为初学者日常热身。',
       range:'建议 60 → 85 BPM',
       bpm:68,
       subdiv:'4',
       aria:'综合循环鼓谱'
+    },
+    {
+      id:'gulou-basic',
+      step:'16',
+      title:'《鼓楼》入门伴奏型',
+      desc:'目标：用简单民谣摇滚律动跟歌练稳定，先稳住八分踩镲和二四拍军鼓。',
+      range:'建议 62 → 78 BPM',
+      bpm:70,
+      subdiv:'2',
+      aria:'鼓楼入门伴奏型鼓谱'
     }
   ]
 };
+
+const PRACTICE_TYPE_LABELS={
+  pad:'哑鼓垫',
+  kit:'架子鼓',
+  plan:'每周任务'
+};
+
+const WEEKLY_PLAN=[
+  {
+    id:'day-1',
+    day:'Day 1',
+    title:'认识落点：八分单击',
+    goal:'先把 R L 交替和 1 2 3 4 的落点对齐。',
+    minutes:'15 分钟',
+    standard:'70 BPM 连续 4 小节不抢拍，再加到 75 BPM。',
+    tasks:[
+      {exercise:'pad-single-eighth', label:'八分单击', bpm:65, subdiv:'2', time:'8 分钟'},
+      {exercise:'quarter', label:'四分稳拍', bpm:70, subdiv:'1', time:'7 分钟'}
+    ]
+  },
+  {
+    id:'day-2',
+    day:'Day 2',
+    title:'十六分手腕控制',
+    goal:'动作变小，不靠手臂硬砸，先追求均匀。',
+    minutes:'18 分钟',
+    standard:'60 BPM 连续 4 小节声音均匀，再练 2 分钟耐力。',
+    tasks:[
+      {exercise:'pad-single-sixteenth', label:'十六分单击', bpm:55, subdiv:'4', time:'10 分钟'},
+      {exercise:'pad-endurance', label:'稳定耐力', bpm:55, subdiv:'4', time:'8 分钟'}
+    ]
+  },
+  {
+    id:'day-3',
+    day:'Day 3',
+    title:'双击入门',
+    goal:'让第二下靠回弹出来，不要比第一下明显变小。',
+    minutes:'18 分钟',
+    standard:'56 BPM 每组 R R L L 清楚，连续 4 小节不乱手。',
+    tasks:[
+      {exercise:'pad-double-sixteenth', label:'双击基础', bpm:50, subdiv:'4', time:'10 分钟'},
+      {exercise:'pad-single-double-mix', label:'单双混合', bpm:52, subdiv:'4', time:'8 分钟'}
+    ]
+  },
+  {
+    id:'day-4',
+    day:'Day 4',
+    title:'重音和轻音',
+    goal:'打出明显强弱差异，轻音真的轻，重音不砸。',
+    minutes:'20 分钟',
+    standard:'54 BPM 重音清楚，轻音不跟着变大。',
+    tasks:[
+      {exercise:'pad-accent-downbeat', label:'拍头重音', bpm:54, subdiv:'4', time:'7 分钟'},
+      {exercise:'pad-accent-offbeat', label:'后移重音', bpm:50, subdiv:'4', time:'7 分钟'},
+      {exercise:'pad-accent-upbeat', label:'反拍重音', bpm:50, subdiv:'4', time:'6 分钟'}
+    ]
+  },
+  {
+    id:'day-5',
+    day:'Day 5',
+    title:'Paradiddle 组合',
+    goal:'熟悉 R L R R / L R L L，为以后加花打基础。',
+    minutes:'18 分钟',
+    standard:'58 BPM 连续 4 小节不乱手，再加 5 BPM。',
+    tasks:[
+      {exercise:'pad-paradiddle', label:'Paradiddle', bpm:52, subdiv:'4', time:'12 分钟'},
+      {exercise:'eighth', label:'八分律动', bpm:76, subdiv:'2', time:'6 分钟'}
+    ]
+  },
+  {
+    id:'day-6',
+    day:'Day 6',
+    title:'上鼓：基础律动',
+    goal:'把手上的稳定性带到整套鼓，脚鼓不要抢。',
+    minutes:'20 分钟',
+    standard:'80 BPM 八分律动连续 8 小节稳定。',
+    tasks:[
+      {exercise:'quarter', label:'四分稳拍', bpm:72, subdiv:'1', time:'6 分钟'},
+      {exercise:'eighth', label:'八分律动', bpm:76, subdiv:'2', time:'8 分钟'},
+      {exercise:'gulou-basic', label:'鼓楼入门伴奏型', bpm:68, subdiv:'2', time:'6 分钟'}
+    ]
+  },
+  {
+    id:'day-7',
+    day:'Day 7',
+    title:'复盘日：慢速到中速',
+    goal:'不要冲速度，把一周内容串起来，记录最稳的 BPM。',
+    minutes:'25 分钟',
+    standard:'选择 3 条练习，各连续 4 小节无明显错误。',
+    tasks:[
+      {exercise:'pad-single-sixteenth', label:'十六分单击', bpm:60, subdiv:'4', time:'8 分钟'},
+      {exercise:'pad-paradiddle', label:'Paradiddle', bpm:56, subdiv:'4', time:'8 分钟'},
+      {exercise:'mixed', label:'综合循环', bpm:66, subdiv:'4', time:'9 分钟'}
+    ]
+  }
+];
 
 const SCORE_PATTERNS={
   'pad-single-eighth': {
@@ -125,6 +291,63 @@ const SCORE_PATTERNS={
     bd:[],
     beams:[[0,3],[4,7],[8,11],[12,15]],
     sticking:{0:'R',1:'R',2:'L',3:'L',4:'R',5:'R',6:'L',7:'L',8:'R',9:'R',10:'L',11:'L',12:'R',13:'R',14:'L',15:'L'}
+  },
+  'pad-single-double-mix': {
+    title:'哑鼓垫单双混合',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'L',2:'R',3:'L',4:'R',5:'R',6:'L',7:'L',8:'R',9:'L',10:'R',11:'L',12:'R',13:'R',14:'L',15:'L'}
+  },
+  'pad-paradiddle': {
+    title:'哑鼓垫 Paradiddle',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'L',2:'R',3:'R',4:'L',5:'R',6:'L',7:'L',8:'R',9:'L',10:'R',11:'R',12:'L',13:'R',14:'L',15:'L'}
+  },
+  'pad-accent-downbeat': {
+    title:'哑鼓垫拍头重音',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'L',2:'R',3:'L',4:'R',5:'L',6:'R',7:'L',8:'R',9:'L',10:'R',11:'L',12:'R',13:'L',14:'R',15:'L'},
+    accents:[0,4,8,12]
+  },
+  'pad-accent-offbeat': {
+    title:'哑鼓垫后移重音',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'L',2:'R',3:'L',4:'R',5:'L',6:'R',7:'L',8:'R',9:'L',10:'R',11:'L',12:'R',13:'L',14:'R',15:'L'},
+    accents:[1,5,9,13]
+  },
+  'pad-accent-upbeat': {
+    title:'哑鼓垫反拍重音',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'L',2:'R',3:'L',4:'R',5:'L',6:'R',7:'L',8:'R',9:'L',10:'R',11:'L',12:'R',13:'L',14:'R',15:'L'},
+    accents:[2,6,10,14]
+  },
+  'pad-endurance': {
+    title:'哑鼓垫稳定耐力',
+    pad:true,
+    hh:[],
+    sd:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],
+    bd:[],
+    beams:[[0,3],[4,7],[8,11],[12,15]],
+    sticking:{0:'R',1:'L',2:'R',3:'L',4:'R',5:'L',6:'R',7:'L',8:'R',9:'L',10:'R',11:'L',12:'R',13:'L',14:'R',15:'L'}
   },
   quarter: {
     title:'四分稳拍',
@@ -167,6 +390,13 @@ const SCORE_PATTERNS={
     sd:[4,12],
     bd:[0,8,11],
     beams:[[4,6],[8,11],[12,14]]
+  },
+  'gulou-basic': {
+    title:'鼓楼入门伴奏型',
+    hh:[0,2,4,6,8,10,12,14],
+    sd:[4,12],
+    bd:[0,6,8,14],
+    beams:[[0,2],[4,6],[8,10],[12,14]]
   }
 };
 
@@ -178,6 +408,7 @@ const DRUM_KEYS={
 
 let practiceType='pad';
 let practiceExerciseId=PRACTICE_EXERCISES.pad[0].id;
+let practicePlanId=WEEKLY_PLAN[0].id;
 
 function renderDrumScores(root=document){
   const VF=getVexFlow();
@@ -203,7 +434,8 @@ function initPractice(){
     const btn=e.target.closest('.practice-type');
     if(!btn||btn.dataset.type===practiceType)return;
     practiceType=btn.dataset.type;
-    practiceExerciseId=PRACTICE_EXERCISES[practiceType][0].id;
+    if(practiceType!=='plan') practiceExerciseId=PRACTICE_EXERCISES[practiceType][0].id;
+    else practicePlanId=WEEKLY_PLAN[0].id;
     updatePracticeTypeTabs();
     renderPracticeOptions();
     renderPracticeDetail();
@@ -211,8 +443,14 @@ function initPractice(){
 
   options.addEventListener('click',e=>{
     const btn=e.target.closest('.practice-option');
-    if(!btn||btn.dataset.exercise===practiceExerciseId)return;
-    practiceExerciseId=btn.dataset.exercise;
+    if(!btn)return;
+    if(practiceType==='plan'){
+      if(btn.dataset.plan===practicePlanId)return;
+      practicePlanId=btn.dataset.plan;
+    } else {
+      if(btn.dataset.exercise===practiceExerciseId)return;
+      practiceExerciseId=btn.dataset.exercise;
+    }
     renderPracticeOptions();
     renderPracticeDetail();
   });
@@ -233,6 +471,15 @@ function updatePracticeTypeTabs(){
 function renderPracticeOptions(){
   const options=document.getElementById('practiceOptions');
   if(!options)return;
+  if(practiceType==='plan'){
+    options.innerHTML=WEEKLY_PLAN.map(plan=>`
+      <button class="practice-option${plan.id===practicePlanId?' active':''}" data-plan="${plan.id}">
+        <span class="practice-option-step">${plan.day}</span>
+        <span>${plan.title}</span>
+      </button>
+    `).join('');
+    return;
+  }
   options.innerHTML=PRACTICE_EXERCISES[practiceType].map(ex=>`
     <button class="practice-option${ex.id===practiceExerciseId?' active':''}" data-exercise="${ex.id}">
       <span class="practice-option-step">${ex.step}</span>
@@ -244,6 +491,10 @@ function renderPracticeOptions(){
 function renderPracticeDetail(){
   const detail=document.getElementById('practiceDetail');
   if(!detail)return;
+  if(practiceType==='plan'){
+    renderPlanDetail(detail);
+    return;
+  }
   const exercise=PRACTICE_EXERCISES[practiceType].find(ex=>ex.id===practiceExerciseId);
   if(!exercise){
     detail.innerHTML='<div class="practice-empty">请选择练习内容</div>';
@@ -262,10 +513,45 @@ function renderPracticeDetail(){
         <span>${exercise.range}</span>
         <button class="use-exercise" data-bpm="${exercise.bpm}" data-subdiv="${exercise.subdiv}">套用</button>
       </div>
+      ${exercise.note?`<div class="exercise-note">${exercise.note}</div>`:''}
       <div class="drum-score${practiceType==='pad'?' pad-score':''}" data-score="${exercise.id}" aria-label="${exercise.aria}"></div>
     </article>
   `;
   renderDrumScores(detail);
+}
+
+function renderPlanDetail(detail){
+  const plan=WEEKLY_PLAN.find(item=>item.id===practicePlanId);
+  if(!plan){
+    detail.innerHTML='<div class="practice-empty">请选择每天任务</div>';
+    return;
+  }
+  detail.innerHTML=`
+    <article class="exercise-card plan-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">${plan.day.replace('Day ','D')}</span>
+        <div>
+          <h2>${plan.title}</h2>
+          <p>${plan.goal}</p>
+        </div>
+      </div>
+      <div class="plan-summary">
+        <div><span>练习时长</span><strong>${plan.minutes}</strong></div>
+        <div><span>达标标准</span><strong>${plan.standard}</strong></div>
+      </div>
+      <div class="plan-task-list">
+        ${plan.tasks.map(task=>`
+          <div class="plan-task">
+            <div>
+              <strong>${task.label}</strong>
+              <span>${task.time} · ${task.bpm} BPM</span>
+            </div>
+            <button class="use-exercise" data-bpm="${task.bpm}" data-subdiv="${task.subdiv}">套用</button>
+          </div>
+        `).join('')}
+      </div>
+    </article>
+  `;
 }
 
 function getVexFlow(){
@@ -362,6 +648,15 @@ function addMeasureLabels(box,pattern){
       svg.appendChild(text);
     });
   }
+  (pattern.accents||[]).forEach(pos=>{
+    const text=document.createElementNS(ns,'text');
+    text.setAttribute('class','vf-accent-mark');
+    text.setAttribute('x',String(108+Number(pos)*19));
+    text.setAttribute('y','47');
+    text.setAttribute('text-anchor','middle');
+    text.textContent='>';
+    svg.appendChild(text);
+  });
   [1,2,3,4].forEach((beat,i)=>{
     const text=document.createElementNS(ns,'text');
     text.setAttribute('class','vf-beat-label');

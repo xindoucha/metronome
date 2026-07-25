@@ -87,6 +87,7 @@ body {
   box-shadow: var(--sh-lg);
   transition: background .25s, border-color .25s;
 }
+.card:has(#panelPractice.active) { max-width: 860px; }
 
 /* ── Card header ── */
 .card-header {
@@ -278,7 +279,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   font-size: 10px; font-weight: 800; letter-spacing: 1.2px;
 }
 .practice-toggle {
-  display: grid; grid-template-columns: repeat(2,1fr); gap: 6px;
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 6px;
 }
 .practice-type,
 .practice-option {
@@ -324,6 +325,60 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   color: var(--text2);
   text-align: center;
   font-size: 13px;
+  font-weight: 700;
+}
+.exercise-note {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+.plan-card { margin-bottom: 0; }
+.plan-summary {
+  display: grid; gap: 8px;
+  margin-bottom: 12px;
+}
+.plan-summary div {
+  display: grid; gap: 4px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+}
+.plan-summary span {
+  color: var(--text3);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.plan-summary strong {
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.plan-task-list {
+  display: grid; gap: 8px;
+}
+.plan-task {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px;
+  border-radius: 11px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+}
+.plan-task div {
+  display: grid; gap: 2px;
+}
+.plan-task strong {
+  color: var(--text);
+  font-size: 13px;
+}
+.plan-task span {
+  color: var(--text2);
+  font-size: 11px;
   font-weight: 700;
 }
 .exercise-card {
@@ -425,6 +480,12 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 }
 .drum-score .vf-sticking.right { fill: var(--accent); }
 .drum-score .vf-sticking.left { fill: var(--warn); }
+.drum-score .vf-accent-mark {
+  fill: var(--danger);
+  font-size: 16px;
+  font-weight: 900;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+}
 .drum-score .notation-error {
   padding: 18px 12px;
   color: var(--danger);
@@ -573,6 +634,37 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
 .accent-reset:hover { border-color: var(--danger); color: var(--danger); background: color-mix(in srgb,var(--danger) 8%,transparent); }
 
 /* ── Responsive ── */
+@media (min-width: 760px) {
+  body { padding: 32px 24px 44px; }
+  .practice-panel.active {
+    display: grid;
+    grid-template-columns: minmax(260px, 310px) minmax(0,1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .practice-head,
+  .practice-tips {
+    grid-column: 1 / -1;
+  }
+  .practice-selectors,
+  .practice-detail {
+    margin-bottom: 0;
+  }
+  .practice-options {
+    grid-template-columns: 1fr;
+    max-height: 470px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .practice-option {
+    min-height: 42px;
+    align-items: flex-start;
+    text-align: left;
+    padding: 8px 10px;
+  }
+  .practice-detail { min-width: 0; }
+  .exercise-card { margin-bottom: 0; }
+}
 @media (max-width: 380px) {
   .bpm-num { font-size: 52px; min-width: 145px; }
   .play-btn { height: 64px; font-size: 17px; }
@@ -580,6 +672,9 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; border-radius
   .al-btn { font-size: 10px; }
   .practice-panel { padding: 14px 12px 18px; }
   .practice-head h1 { font-size: 18px; }
+  .practice-toggle { grid-template-columns: 1fr; }
   .practice-options { grid-template-columns: repeat(2,1fr); }
   .practice-option { min-height: 44px; }
+  .plan-task { align-items: stretch; flex-direction: column; }
+  .plan-task .use-exercise { width: 100%; }
 }
