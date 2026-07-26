@@ -169,10 +169,94 @@ const PRACTICE_EXERCISES={
 };
 
 const PRACTICE_TYPE_LABELS={
+  info:'基础知识',
   pad:'哑鼓垫',
   kit:'架子鼓',
   plan:'15天计划'
 };
+
+const KNOWLEDGE_TOPICS=[
+  {
+    id:'notes',
+    step:'K1',
+    title:'音符时值',
+    desc:'先理解一拍里放几个音，再去看练习谱会轻松很多。',
+    cards:[
+      {mark:'♩', title:'四分音符', text:'一拍一下，只打主拍。适合建立 1 2 3 4 的稳定落点。'},
+      {mark:'♪ ♪', title:'八分音符', text:'一拍两下，可以数成 1 & 2 &。多数入门歌曲会先从八分踩镲开始。'},
+      {mark:'♬♬', title:'十六分音符', text:'一拍四下，可以数成 1 e & a。先慢速练均匀，不要急着提速。'},
+      {mark:'3', title:'三连音', text:'一拍三下，感觉更圆。初学阶段先认识，不必马上追求速度。'}
+    ],
+    actions:[
+      {label:'套用四分', bpm:70, subdiv:'1'},
+      {label:'套用八分', bpm:70, subdiv:'2'},
+      {label:'套用十六分', bpm:60, subdiv:'4'}
+    ]
+  },
+  {
+    id:'drum-map',
+    step:'K2',
+    title:'鼓谱位置',
+    desc:'入门阶段先认三个核心部件：踩镲、军鼓、底鼓。',
+    cards:[
+      {mark:'HH', title:'踩镲', text:'通常在谱面上方，用 x 符头显示。右手负责稳定脉冲。'},
+      {mark:'SD', title:'军鼓', text:'常见在第 2、4 拍出现，是律动的核心重心。'},
+      {mark:'BD', title:'底鼓', text:'脚踩，常放在第 1 拍和其他变化位置。先轻踩准，不要抢。'}
+    ],
+    actions:[
+      {label:'练八分律动', type:'kit', exercise:'eighth'},
+      {label:'练鼓楼入门型', type:'kit', exercise:'gulou-basic'}
+    ]
+  },
+  {
+    id:'stroke-types',
+    step:'K3',
+    title:'击打类型',
+    desc:'同样是打一下，手法和声音控制不同，练习目标也不同。',
+    cards:[
+      {mark:'R L', title:'单击', text:'左右手轮流。目标是声音、间隔和动作高度一致。'},
+      {mark:'R R L L', title:'双击', text:'同一只手连续两下。第二下要靠回弹出来，不要塌掉。'},
+      {mark:'>', title:'重音', text:'重音更明显，轻音保持小声。差异来自动作高度，不是硬砸。'},
+      {mark:'ghost', title:'轻音', text:'轻音贴近鼓面，保持节奏存在感，但不要盖过重音。'}
+    ],
+    actions:[
+      {label:'练单击', type:'pad', exercise:'pad-single-eighth'},
+      {label:'练双击', type:'pad', exercise:'pad-double-sixteenth'},
+      {label:'练重音', type:'pad', exercise:'pad-accent-downbeat'}
+    ]
+  },
+  {
+    id:'reading',
+    step:'K4',
+    title:'读谱顺序',
+    desc:'不要一眼看所有音。先抓住稳定脉冲，再加其他鼓件。',
+    cards:[
+      {mark:'1', title:'先看右手', text:'先确认踩镲或哑鼓垫连续音符是否稳定。'},
+      {mark:'2', title:'再看军鼓', text:'找第 2、4 拍，知道哪里是律动重心。'},
+      {mark:'3', title:'最后看底鼓', text:'底鼓是变化来源，慢速读清楚再上脚。'}
+    ],
+    actions:[
+      {label:'练四分稳拍', type:'kit', exercise:'quarter'},
+      {label:'练综合循环', type:'kit', exercise:'mixed'}
+    ]
+  },
+  {
+    id:'practice-standard',
+    step:'K5',
+    title:'练习达标',
+    desc:'新手最容易练得太快。用明确标准判断今天是否该提速。',
+    cards:[
+      {mark:'4小节', title:'连续无错', text:'一条练习能连续 4 小节稳定，再考虑加 5 BPM。'},
+      {mark:'-5 BPM', title:'错了降速', text:'如果明显抢拍、拖拍或乱手，不要硬撑，降 5 BPM 重来。'},
+      {mark:'录音', title:'自我检查', text:'录 1 分钟，听间隔是否均匀，比边打边猜更可靠。'},
+      {mark:'放松', title:'动作质量', text:'手腕、肩膀、脚踝不能僵。紧张时先降速。'}
+    ],
+    actions:[
+      {label:'打开15天计划', type:'plan', plan:'day-1'},
+      {label:'练稳定耐力', type:'pad', exercise:'pad-endurance'}
+    ]
+  }
+];
 
 const WEEKLY_PLAN=[
   {
@@ -581,7 +665,8 @@ const DRUM_KEYS={
   bd:'f/4'
 };
 
-let practiceType='pad';
+let practiceType='info';
+let knowledgeTopicId=KNOWLEDGE_TOPICS[0].id;
 let practiceExerciseId=PRACTICE_EXERCISES.pad[0].id;
 let practicePlanId=WEEKLY_PLAN[0].id;
 
@@ -609,8 +694,9 @@ function initPractice(){
     const btn=e.target.closest('.practice-type');
     if(!btn||btn.dataset.type===practiceType)return;
     practiceType=btn.dataset.type;
-    if(practiceType!=='plan') practiceExerciseId=PRACTICE_EXERCISES[practiceType][0].id;
-    else practicePlanId=WEEKLY_PLAN[0].id;
+    if(practiceType==='info') knowledgeTopicId=KNOWLEDGE_TOPICS[0].id;
+    else if(practiceType==='plan') practicePlanId=WEEKLY_PLAN[0].id;
+    else practiceExerciseId=PRACTICE_EXERCISES[practiceType][0].id;
     updatePracticeTypeTabs();
     renderPracticeOptions();
     renderPracticeDetail();
@@ -619,13 +705,27 @@ function initPractice(){
   options.addEventListener('click',e=>{
     const btn=e.target.closest('.practice-option');
     if(!btn)return;
-    if(practiceType==='plan'){
+    if(practiceType==='info'){
+      if(btn.dataset.topic===knowledgeTopicId)return;
+      knowledgeTopicId=btn.dataset.topic;
+    } else if(practiceType==='plan'){
       if(btn.dataset.plan===practicePlanId)return;
       practicePlanId=btn.dataset.plan;
     } else {
       if(btn.dataset.exercise===practiceExerciseId)return;
       practiceExerciseId=btn.dataset.exercise;
     }
+    renderPracticeOptions();
+    renderPracticeDetail();
+  });
+
+  detail.addEventListener('click',e=>{
+    const jump=e.target.closest('.knowledge-jump');
+    if(!jump)return;
+    practiceType=jump.dataset.type;
+    if(practiceType==='plan') practicePlanId=jump.dataset.plan;
+    else practiceExerciseId=jump.dataset.exercise;
+    updatePracticeTypeTabs();
     renderPracticeOptions();
     renderPracticeDetail();
   });
@@ -646,6 +746,15 @@ function updatePracticeTypeTabs(){
 function renderPracticeOptions(){
   const options=document.getElementById('practiceOptions');
   if(!options)return;
+  if(practiceType==='info'){
+    options.innerHTML=KNOWLEDGE_TOPICS.map(topic=>`
+      <button class="practice-option${topic.id===knowledgeTopicId?' active':''}" data-topic="${topic.id}">
+        <span class="practice-option-step">${topic.step}</span>
+        <span>${topic.title}</span>
+      </button>
+    `).join('');
+    return;
+  }
   if(practiceType==='plan'){
     options.innerHTML=WEEKLY_PLAN.map(plan=>`
       <button class="practice-option${plan.id===practicePlanId?' active':''}" data-plan="${plan.id}">
@@ -666,6 +775,10 @@ function renderPracticeOptions(){
 function renderPracticeDetail(){
   const detail=document.getElementById('practiceDetail');
   if(!detail)return;
+  if(practiceType==='info'){
+    renderKnowledgeDetail(detail);
+    return;
+  }
   if(practiceType==='plan'){
     renderPlanDetail(detail);
     return;
@@ -693,6 +806,44 @@ function renderPracticeDetail(){
     </article>
   `;
   renderDrumScores(detail);
+}
+
+function renderKnowledgeDetail(detail){
+  const topic=KNOWLEDGE_TOPICS.find(item=>item.id===knowledgeTopicId);
+  if(!topic){
+    detail.innerHTML='<div class="practice-empty">请选择基础知识</div>';
+    return;
+  }
+  detail.innerHTML=`
+    <article class="exercise-card knowledge-card">
+      <div class="exercise-meta">
+        <span class="exercise-step">${topic.step}</span>
+        <div>
+          <span class="plan-stage">基础知识</span>
+          <h2>${topic.title}</h2>
+          <p>${topic.desc}</p>
+        </div>
+      </div>
+      <div class="knowledge-grid">
+        ${topic.cards.map(card=>`
+          <div class="knowledge-item">
+            <span class="knowledge-mark">${card.mark}</span>
+            <div>
+              <strong>${card.title}</strong>
+              <p>${card.text}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="knowledge-actions">
+        ${topic.actions.map(action=>action.exercise||action.plan?`
+          <button class="knowledge-jump" data-type="${action.type}" data-exercise="${action.exercise||''}" data-plan="${action.plan||''}">${action.label}</button>
+        `:`
+          <button class="use-exercise" data-bpm="${action.bpm}" data-subdiv="${action.subdiv}">${action.label}</button>
+        `).join('')}
+      </div>
+    </article>
+  `;
 }
 
 function renderPlanDetail(detail){
