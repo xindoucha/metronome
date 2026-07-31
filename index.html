@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>节拍器 Metronome</title>
-  <link rel="stylesheet" href="css/style.css?v=1.9.0">
+  <link rel="stylesheet" href="css/style.css?v=2.0.0">
 </head>
 <body>
 
@@ -62,7 +62,7 @@
         <button class="cfg-btn" id="btnSound">
           <span class="cfg-ico">🎵</span>
           <span class="cfg-lbl">音色</span>
-          <span class="cfg-val" id="cfgSound">经典</span>
+          <span class="cfg-val" id="cfgSound">真实鼓组</span>
         </button>
         <button class="cfg-btn" id="btnAccent">
           <span class="cfg-ico">🔊</span>
@@ -184,7 +184,7 @@
   </section>
 
   <!-- Footer -->
-  <div class="card-footer">v1.9.0</div>
+  <div class="card-footer">v2.0.0</div>
 
 </div><!-- /card -->
 
@@ -244,7 +244,22 @@
   </div>
   <div class="sheet-body">
     <ul class="sound-list" id="soundList">
-      <li class="sound-item sel" data-s="classic">
+      <li class="sound-item sel" data-s="realdrums">
+        <span class="sound-ico">🥁</span>
+        <span class="sound-info"><span class="sound-name">真实鼓组</span><span class="sound-desc">CC0 真实鼓采样，底鼓 / 军鼓 / 踩镲分层</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="acousticclick">
+        <span class="sound-ico">🪵</span>
+        <span class="sound-info"><span class="sound-name">原声节拍</span><span class="sound-desc">rim 与底鼓点缀，更接近练习器点击感</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="hatpulse">
+        <span class="sound-ico">🎧</span>
+        <span class="sound-info"><span class="sound-name">踩镲计拍</span><span class="sound-desc">真实 closed hat 计拍，适合架子鼓跟练</span></span>
+        <span class="sound-check">✓</span>
+      </li>
+      <li class="sound-item" data-s="classic">
         <span class="sound-ico">🪘</span>
         <span class="sound-info"><span class="sound-name">经典</span><span class="sound-desc">传统节拍器双音叠加</span></span>
         <span class="sound-check">✓</span>
@@ -256,7 +271,7 @@
       </li>
       <li class="sound-item" data-s="drumkit">
         <span class="sound-ico">🥁</span>
-        <span class="sound-info"><span class="sound-name">架子鼓</span><span class="sound-desc">重音底鼓，普通军鼓，细分踩镲</span></span>
+        <span class="sound-info"><span class="sound-name">合成鼓组</span><span class="sound-desc">Web Audio 合成鼓组，可作为离线 fallback</span></span>
         <span class="sound-check">✓</span>
       </li>
       <li class="sound-item" data-s="wood">
@@ -323,7 +338,7 @@
 </div>
 
 <script src="vendor/vexflow/vexflow.js?v=4.2.5" defer></script>
-<script src="js/practice.js?v=1.9.0" defer></script>
-<script src="js/app.js?v=1.9.0" defer></script>
+<script src="js/practice.js?v=2.0.0" defer></script>
+<script src="js/app.js?v=2.0.0" defer></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════
    State
 ════════════════════════════════════════════ */
-let bpm=120, beats=4, noteValue=4, subdiv='1', sound='classic', vol=0.8;
+let bpm=120, beats=4, noteValue=4, subdiv='1', sound='realdrums', vol=0.8;
 let playing=false, isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
 // accentLevels: 0=strong,1=normal,2=ghost,3=mute
 let accentLevels=[0,1,1,1];
@@ -29,6 +29,69 @@ const AC=()=>{
 };
 // Volume multipliers per click type
 const VM={accent:1,beat:.72,sub:.38,ghost:.28};
+const SAMPLE_SOUNDS=new Set(['realdrums','acousticclick','hatpulse']);
+const SAMPLE_URLS={
+  kick:'assets/audio/drums/kick.wav',
+  snare:'assets/audio/drums/snare.wav',
+  rim:'assets/audio/drums/rim.wav',
+  hat:'assets/audio/drums/hat-closed.wav',
+};
+let sampleBuffers=null, sampleLoadPromise=null;
+
+function isSampleSound(name){
+  return SAMPLE_SOUNDS.has(name);
+}
+
+function loadDrumSamples(c=AC()){
+  if(sampleBuffers)return Promise.resolve(sampleBuffers);
+  if(!sampleLoadPromise){
+    sampleLoadPromise=Promise.all(Object.entries(SAMPLE_URLS).map(async([name,url])=>{
+      const res=await fetch(url);
+      if(!res.ok)throw new Error(`Failed to load ${url}: ${res.status}`);
+      const data=await res.arrayBuffer();
+      const buffer=await c.decodeAudioData(data);
+      return [name,buffer];
+    })).then(entries=>{
+      sampleBuffers=Object.fromEntries(entries);
+      return sampleBuffers;
+    }).catch(err=>{
+      sampleLoadPromise=null;
+      console.warn('[Audio] drum samples unavailable, falling back to synthesized kit.',err);
+      throw err;
+    });
+  }
+  return sampleLoadPromise;
+}
+
+function ensureSoundReady(){
+  if(!isSampleSound(sound))return Promise.resolve();
+  return loadDrumSamples(AC()).catch(()=>{});
+}
+
+function playSample(c,name,t,gain=1,rate=1,dur){
+  const buffer=sampleBuffers&&sampleBuffers[name];
+  if(!buffer)return false;
+  const src=c.createBufferSource(),g=c.createGain();
+  const len=dur||buffer.duration;
+  src.buffer=buffer;
+  src.playbackRate.setValueAtTime(rate,t);
+  g.gain.setValueAtTime(Math.max(.0001,gain),t);
+  g.gain.exponentialRampToValueAtTime(.0001,t+Math.min(len,.32));
+  src.connect(g);g.connect(c.destination);
+  src.start(t);
+  src.stop(t+len+.01);
+  return true;
+}
+
+function playSampleLayers(c,layers,t,baseGain){
+  if(!sampleBuffers)return false;
+  let played=false;
+  layers.forEach(layer=>{
+    const [name,gain=1,offset=0,rate=1,dur]=layer;
+    played=playSample(c,name,t+offset,baseGain*gain,rate,dur)||played;
+  });
+  return played;
+}
 
 // Resolve accent level → click type
 function levelToType(beatIdx){
@@ -227,6 +290,48 @@ const SND={
       hat(t,m*.28,.032);
     }
   },
+  realdrums:(c,t,tp,v)=>{
+    const m=v*VM[tp];
+    let played=false;
+    if(tp==='accent'){
+      played=playSampleLayers(c,[['kick',.92],['snare',.58,.004,1,.18],['hat',.42,0,1,.09]],t,m);
+    } else if(tp==='beat'){
+      played=playSampleLayers(c,[['rim',.72,0,1.08,.14],['hat',.26,0,1,.065]],t,m);
+    } else if(tp==='sub'){
+      played=playSampleLayers(c,[['hat',.72,0,1.08,.045]],t,m);
+    } else {
+      played=playSampleLayers(c,[['hat',.42,0,1.16,.035]],t,m);
+    }
+    if(!played)SND.drumkit(c,t,tp,v);
+  },
+  acousticclick:(c,t,tp,v)=>{
+    const m=v*VM[tp];
+    let played=false;
+    if(tp==='accent'){
+      played=playSampleLayers(c,[['rim',.95,0,1.2,.11],['kick',.34,0,1,.11]],t,m);
+    } else if(tp==='beat'){
+      played=playSampleLayers(c,[['rim',.72,0,1.28,.085]],t,m);
+    } else if(tp==='sub'){
+      played=playSampleLayers(c,[['hat',.46,0,1.18,.035]],t,m);
+    } else {
+      played=playSampleLayers(c,[['hat',.25,0,1.25,.03]],t,m);
+    }
+    if(!played)SND.timer(c,t,tp,v);
+  },
+  hatpulse:(c,t,tp,v)=>{
+    const m=v*VM[tp];
+    let played=false;
+    if(tp==='accent'){
+      played=playSampleLayers(c,[['hat',.82,0,.96,.075],['kick',.22,0,1,.09]],t,m);
+    } else if(tp==='beat'){
+      played=playSampleLayers(c,[['hat',.64,0,1.04,.052]],t,m);
+    } else if(tp==='sub'){
+      played=playSampleLayers(c,[['hat',.42,0,1.12,.032]],t,m);
+    } else {
+      played=playSampleLayers(c,[['hat',.22,0,1.18,.028]],t,m);
+    }
+    if(!played)SND.drumkit(c,t,tp,v);
+  },
 };
 
 /* ════════════════════════════════════════════
@@ -296,13 +401,15 @@ function startM(){
   const src=c.createBufferSource();
   src.buffer=buf; src.connect(c.destination); src.start(0);
   const begin=()=>{
+    if(!playing)return;
     currentBeat=0; nextBeatTime=c.currentTime+.3; beatQueue=[];
     sched(); rafID=requestAnimationFrame(draw);
   };
+  const beginWhenReady=()=>ensureSoundReady().then(begin);
   if(c.state==='suspended'){
-    c.resume().then(begin);
+    c.resume().then(beginWhenReady);
   } else {
-    begin();
+    beginWhenReady();
   }
 }
 function stopM(){
@@ -601,7 +708,7 @@ document.getElementById('soundList').addEventListener('click',e=>{
   document.getElementById('cfgSound').textContent=item.querySelector('.sound-name').textContent;
   // Preview sound — await resume for iOS
   const c=AC();
-  const preview=()=>SND[sound](c,c.currentTime+.05,'accent',vol*.7);
+  const preview=()=>ensureSoundReady().then(()=>SND[sound](c,c.currentTime+.05,'accent',vol*.7));
   if(c.state==='suspended') c.resume().then(preview); else preview();
 });
 
