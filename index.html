@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>节拍器 Metronome</title>
-  <link rel="stylesheet" href="css/style.css?v=2.0.0">
+  <link rel="stylesheet" href="css/style.css?v=2.1.0">
 </head>
 <body>
 
@@ -29,6 +29,7 @@
   <div class="app-tabs" role="tablist" aria-label="功能切换">
     <button class="app-tab active" id="tabMetronome" data-tab="metronome" role="tab" aria-selected="true" aria-controls="panelMetronome">节拍器</button>
     <button class="app-tab" id="tabPractice" data-tab="practice" role="tab" aria-selected="false" aria-controls="panelPractice">练习谱</button>
+    <button class="app-tab" id="tabTranscription" data-tab="transcription" role="tab" aria-selected="false" aria-controls="panelTranscription">智能鼓谱</button>
   </div>
 
   <section class="tab-panel active" id="panelMetronome" role="tabpanel" aria-labelledby="tabMetronome">
@@ -183,8 +184,109 @@
     <div class="practice-detail" id="practiceDetail"></div>
   </section>
 
+  <section class="tab-panel transcription-panel" id="panelTranscription" role="tabpanel" aria-labelledby="tabTranscription">
+    <div class="transcription-head">
+      <div>
+        <p class="practice-kicker">AI TRANSCRIPTION LAB</p>
+        <h1>从歌曲生成练习鼓谱</h1>
+        <p>先体验上传、难度简化和谱面校对流程。</p>
+      </div>
+      <span class="demo-badge">交互 Demo</span>
+    </div>
+
+    <div class="demo-notice">
+      <strong>当前为产品原型</strong>
+      <span>上传的音频仅在浏览器本地预览；本版本使用预设鼓点模拟转录结果，尚未调用音频识别模型。</span>
+    </div>
+
+    <div class="transcription-workbench">
+      <aside class="transcription-controls">
+        <div class="control-section">
+          <span class="control-eyebrow">01 · 音频来源</span>
+          <label class="audio-drop" id="audioDrop" for="audioFile">
+            <span class="audio-drop-icon">＋</span>
+            <strong id="audioDropTitle">上传歌曲片段</strong>
+            <small id="audioDropMeta">MP3 / WAV / M4A，建议 30–60 秒</small>
+          </label>
+          <input class="visually-hidden" id="audioFile" type="file" accept="audio/*">
+          <button class="secondary-action" id="useDemoAudio" type="button">使用内置律动示例</button>
+          <audio class="audio-preview" id="audioPreview" controls preload="metadata"></audio>
+        </div>
+
+        <div class="control-section">
+          <span class="control-eyebrow">02 · 生成设置</span>
+          <label class="field-label" for="transcriptionBars">分析范围</label>
+          <select class="demo-select" id="transcriptionBars">
+            <option value="4">前 4 小节</option>
+            <option value="8">前 8 小节</option>
+            <option value="section">自动识别一个段落（Demo 为 4 小节）</option>
+          </select>
+          <button class="generate-score" id="generateScore" type="button">
+            <span>生成示例鼓谱</span>
+            <small>约 3 秒完成流程演示</small>
+          </button>
+        </div>
+
+        <div class="analysis-progress" id="analysisProgress" aria-live="polite">
+          <div class="progress-track"><span id="analysisProgressBar"></span></div>
+          <div class="progress-copy">
+            <strong id="analysisProgressTitle">示例结果已就绪</strong>
+            <span id="analysisProgressText">可直接切换难度查看变化</span>
+          </div>
+        </div>
+      </aside>
+
+      <div class="transcription-result">
+        <div class="result-toolbar">
+          <div>
+            <span class="result-source" id="resultSource">内置示例 · Indie Pop Groove</span>
+            <h2 id="resultTitle">主歌节奏转录</h2>
+          </div>
+          <div class="result-metrics" aria-label="分析结果摘要">
+            <span><strong>92</strong>BPM</span>
+            <span><strong>4/4</strong>拍号</span>
+            <span><strong id="resultConfidence">88%</strong>可信度</span>
+          </div>
+        </div>
+
+        <div class="difficulty-row">
+          <div>
+            <span class="control-eyebrow">练习难度</span>
+            <p id="difficultyHint">保留主干节奏，适合第一次跟歌练习。</p>
+          </div>
+          <div class="difficulty-switch" id="difficultySwitch" role="group" aria-label="选择鼓谱难度">
+            <button class="difficulty-btn active" data-level="starter" type="button">入门</button>
+            <button class="difficulty-btn" data-level="basic" type="button">基础</button>
+            <button class="difficulty-btn" data-level="advanced" type="button">进阶</button>
+            <button class="difficulty-btn" data-level="original" type="button">原始</button>
+          </div>
+        </div>
+
+        <div class="score-overview">
+          <div class="score-legend" aria-label="鼓谱图例">
+            <span><i class="legend-x">×</i>踩镲</span>
+            <span><i class="legend-dot-note"></i>军鼓</span>
+            <span><i class="legend-dot-note kick"></i>底鼓</span>
+          </div>
+          <div class="transcription-score" id="transcriptionScore" aria-label="生成的架子鼓鼓谱"></div>
+        </div>
+
+        <div class="simplification-summary">
+          <div><span>保留音符</span><strong id="keptNotes">24 / 52</strong></div>
+          <div><span>处理规则</span><strong id="simplifyRule">稳定八分律动</strong></div>
+          <div><span>建议速度</span><strong id="practiceTempo">65–80 BPM</strong></div>
+        </div>
+
+        <div class="result-actions">
+          <button class="secondary-action" id="downloadDemoJson" type="button">下载 Demo JSON</button>
+          <button class="secondary-action" type="button" disabled>MusicXML · 下一阶段</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
-  <div class="card-footer">v2.0.0</div>
+  <div class="card-footer">v2.1.0</div>
 
 </div><!-- /card -->
 
@@ -338,7 +440,8 @@
 </div>
 
 <script src="vendor/vexflow/vexflow.js?v=4.2.5" defer></script>
-<script src="js/practice.js?v=2.0.0" defer></script>
-<script src="js/app.js?v=2.0.0" defer></script>
+<script src="js/practice.js?v=2.1.0" defer></script>
+<script src="js/transcription-demo.js?v=2.1.0" defer></script>
+<script src="js/app.js?v=2.1.0" defer></script>
 </body>
 </html>

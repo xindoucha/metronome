@@ -12,7 +12,9 @@
 
 **每次改动必须同步更新：**
 1. `index.html` 中 `.card-footer` 的版本号文字
-2. `CHANGELOG.md` 顶部新增对应条目
+2. `index.html` 中 CSS / JS 静态资源的版本查询参数
+3. `CHANGELOG.md` 顶部新增对应条目
+4. 功能发生变化时同步更新 `DESIGN.md`
 
 ## 提交信息格式
 
@@ -31,6 +33,7 @@ index.html      页面结构
 css/style.css   所有样式
 js/app.js       所有逻辑（Web Audio 调度、UI 交互）
 js/practice.js  架子鼓练习谱数据与 VexFlow 渲染
+js/transcription-demo.js  智能鼓谱交互原型与难度示例数据
 vendor/vexflow/ VexFlow 本地 vendor 依赖（不要改为运行时 CDN）
 DESIGN.md       功能与技术设计说明
 CHANGELOG.md    版本历史
